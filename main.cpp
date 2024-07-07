@@ -109,9 +109,9 @@ void useful4Visualization(vector<vector<pair<int,int>>> wikiDatabase, unordered_
 
 int main() {
 
-    string stringMapFile = "DOWNLOAD LOCATION";
-    string IDMapFile = "DOWNLOAD LOCATION";
-    string vecFile = "DOWNLOAD LOCATION";
+    string stringMapFile = "bin/getStringMap.bin";
+    string IDMapFile = "bin/getIDmap.bin";
+    string vecFile = "bin/wikiDatabase.bin";
 
     unordered_map<string, int> getID;
     unordered_map<int, string> getTitle;
@@ -120,6 +120,8 @@ int main() {
     deserializeIDMap(getID, stringMapFile);
     deserializeStringMap(getTitle, IDMapFile);
     deserializeVec(wikiDatabase, vecFile);
+
+	useful4Visualization(wikiDatabase, getID); // run test code
 
     return 0;
 }
