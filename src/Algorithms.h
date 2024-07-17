@@ -93,6 +93,12 @@ void Algorithms::bfsTesting()
 	cout << "Shortest Path Length: " << to_string(results.second.size()) << endl;
 	cout << "Number of Pages Inspected: " << to_string(results.first.first) << endl;
 	cout << "Runtime: " << to_string(results.first.second) << " seconds" <<endl;
+
+	if(results.second.size() == 0)
+	{
+		cout << "Page Connection Not Found!";
+		return;
+	}
 	for(int i = 0; i < results.second.size() - 1; i++) // prints all but final element
 	{
 		cout << results.second[i] << " -> ";
