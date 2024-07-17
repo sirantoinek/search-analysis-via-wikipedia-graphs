@@ -1,0 +1,3 @@
+C:/Users/kev77/CLionProjects/Search-Analysis-via-Wikipedia-Graphs/cmake-build-default/CMakeFiles/Search_Analysis_via_Wikipedia_Graphs.dir
+C:/Users/kev77/CLionProjects/Search-Analysis-via-Wikipedia-Graphs/cmake-build-default/CMakeFiles/edit_cache.dir
+C:/Users/kev77/CLionProjects/Search-Analysis-via-Wikipedia-Graphs/cmake-build-default/CMakeFiles/rebuild_cache.dir

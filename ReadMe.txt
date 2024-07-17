@@ -4,3 +4,6 @@ DOWNLOAD binaries.zip FROM HERE:
 https://drive.google.com/file/d/1HBnSRNCwfCoaA9rP8cGIjFhIeS1TEznV/view?usp=sharing
 
 The files in binaries.zip must be extracted into the bin folder for the program to function. This limitation is due to the LFS 1gb storage limit on github.
+
+When running the Cmake application set the "Working directory" in your IDE to the project root folder (should be "Search-Analysis-via-Wikipedia-Graphs").
+Otherwise, the binaries will not be found as the relative path will be invalid.
