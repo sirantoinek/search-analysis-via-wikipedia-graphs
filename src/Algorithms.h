@@ -1,6 +1,9 @@
 #include <chrono>
 #include <set>
 #include <queue>
+#include <map>
+#include <ctime>
+#include <algorithm>
 
 #include "WikiDatabase.cpp"
 
@@ -19,41 +22,64 @@ public:
 
 pair<pair<int, double>, vector<string>> Algorithms::breadthFirstSearch(string from, string to) // uses modified version of algorithm found in M10_08_COP3530_F23_Kapoor_accessible.pdf (Module 10 Graph Traversal slides) (page 4)
 {
-	// todo: Finish BFS function
+	// todo: Test BFS function (write function in WikiDatabase.cpp to test BFS) note: I haven't tested BFS at all yet :)
 
 	pair<pair<int, double>, vector<string>> results;
+	results.first.first = 0;
+
 	int fromId = getID[from];
 	int toId = getID[to];
+	bool found = false;
 
 	chrono::high_resolution_clock::time_point startTime = chrono::high_resolution_clock::now(); // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
 
-	std::set<int> visited;
-	std::queue<int> q;
-	visited.insert(fromId);
+	map<int, int> visited; // key is the inserted article and value is the article that it came from (useful for finding shortest path)
+	queue<int> q;
+	visited[fromId] = fromId;
+	vector<pair<int, int>> neighbors; // second is a junk value (weight). this strategy prevents the need to loop through an articles connections.
+
 	q.push(fromId);
 
 	while(!q.empty())
 	{
 		int currentPage = q.front();
 		results.first.first ++; // increment nodes inspected
-
-		if(currentPage = toId)
-		{
-
-		}
 		q.pop();
 
-		vector<string> neighbors = graph[currentPage];
-		std::sort(neighbors.begin(), neighbors.begin() + neighbors.size());
-		for(string v: neighbors)
+		neighbors = wikiDatabase[currentPage];
+		sort(neighbors.begin(), neighbors.begin() + neighbors.size());
+		for(int i = 0; i < neighbors.size(); i++)
 		{
-			if(visited.count(v) == 0)
+			if(visited.find(neighbors[i].first) == visited.end())
 			{
-				visited.insert(v);
-				q.push(v);
+				visited[neighbors[i].first] = currentPage;
+				if(neighbors[i].first == toId)
+				{
+					found = true;
+					break;
+				}
+				q.push(neighbors[i].first);
 			}
 		}
+
+		if(found) break;
 	}
+
+	if(found)
+	{
+		int temp = toId;
+		while(temp != fromId)
+		{
+			results.second.push_back(getTitle[temp]);
+			temp = visited[temp]; // sets temp to its predecessor
+		}
+		results.second.push_back(getTitle[temp]); // adds fromId
+
+		reverse(results.second.begin(), results.second.end()); // referenced https://cplusplus.com/reference/algorithm/reverse/
+	}
+
+	chrono::high_resolution_clock::time_point endTime = chrono::high_resolution_clock::now(); // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
+	results.first.second = chrono::duration<double>((endTime - startTime)).count(); // saves time in seconds (should this be different? milliseconds perhaps?)
 
 	return results;
 }
