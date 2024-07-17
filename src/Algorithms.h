@@ -16,14 +16,13 @@ public:
 	pair<pair<int, double>, vector<string>> breadthFirstSearch(string from, string to);
 	// returns a pair containing another pair in first, and a vector of strings in second that contains the path between the "from" and "to" articles.
 	// the pair in first contains the number of nodes inspected as an int (first) and the runtime of the function as a double (second).
+	void bfsTesting(); // function purely for testing purposes
 };
 
 // Class Function Definitions ---------------------
 
 pair<pair<int, double>, vector<string>> Algorithms::breadthFirstSearch(string from, string to) // uses modified version of algorithm found in M10_08_COP3530_F23_Kapoor_accessible.pdf (Module 10 Graph Traversal slides) (page 4)
 {
-	// todo: Test BFS function (write function in WikiDatabase.cpp to test BFS) note: I haven't tested BFS at all yet :)
-
 	pair<pair<int, double>, vector<string>> results;
 	results.first.first = 0;
 
@@ -82,4 +81,21 @@ pair<pair<int, double>, vector<string>> Algorithms::breadthFirstSearch(string fr
 	results.first.second = chrono::duration<double>((endTime - startTime)).count(); // saves time in seconds (should this be different? milliseconds perhaps?)
 
 	return results;
+}
+
+void Algorithms::bfsTesting()
+{
+	string from = "World War II"; // enter stating from page here
+	string to = "Tony Hawk's Pro Skater 2"; // enter target page here
+	pair<pair<int, double>, vector<string>> results = breadthFirstSearch(from, to);
+
+	cout << "\nBFS TESTING: \n\nStarting at: \"" << from <<"\"\nSearching for: \"" << to << "\"\n";
+	cout << "Shortest Path Length: " << to_string(results.second.size()) << endl;
+	cout << "Number of Pages Inspected: " << to_string(results.first.first) << endl;
+	cout << "Runtime: " << to_string(results.first.second) << " seconds" <<endl;
+	for(int i = 0; i < results.second.size() - 1; i++) // prints all but final element
+	{
+		cout << results.second[i] << " -> ";
+	}
+	cout << results.second[results.second.size() - 1]; // prints final element with no arrow
 }

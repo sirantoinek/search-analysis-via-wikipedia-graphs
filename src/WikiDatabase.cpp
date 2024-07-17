@@ -44,7 +44,7 @@ struct WikiDatabase
 		*/
 	}
 
-	private:
+private:
 
 	void deserializeIDMap() {
 		ifstream file(stringMapFile, ios::binary);

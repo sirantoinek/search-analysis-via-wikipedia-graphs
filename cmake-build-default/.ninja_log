@@ -1,3 +1,14 @@
 # ninja log v5
 3	557	7428738703838585	CMakeFiles/Search_Analysis_via_Wikipedia_Graphs.dir/src/main.cpp.obj	f1f3fd8e096fc0de
 557	647	7428738704734354	Search_Analysis_via_Wikipedia_Graphs.exe	7c0edddbd607e94f
+35	820	7429501490278182	CMakeFiles/Search_Analysis_via_Wikipedia_Graphs.dir/src/WikiDatabase.cpp.obj	53b69adc16ec5ffa
+13	1235	7429501494408306	CMakeFiles/Search_Analysis_via_Wikipedia_Graphs.dir/src/main.cpp.obj	f1f3fd8e096fc0de
+1235	1570	7429501497757233	Search_Analysis_via_Wikipedia_Graphs.exe	72b09265e2ea10d8
+4	926	7429537043906827	CMakeFiles/Search_Analysis_via_Wikipedia_Graphs.dir/src/main.cpp.obj	f1f3fd8e096fc0de
+927	1086	7429537045492163	Search_Analysis_via_Wikipedia_Graphs.exe	72b09265e2ea10d8
+4	795	7429538770022635	CMakeFiles/Search_Analysis_via_Wikipedia_Graphs.dir/src/main.cpp.obj	f1f3fd8e096fc0de
+796	931	7429538771373792	Search_Analysis_via_Wikipedia_Graphs.exe	72b09265e2ea10d8
+4	778	7429539331952033	CMakeFiles/Search_Analysis_via_Wikipedia_Graphs.dir/src/main.cpp.obj	f1f3fd8e096fc0de
+779	914	7429539333298197	Search_Analysis_via_Wikipedia_Graphs.exe	72b09265e2ea10d8
+4	782	7429547101297135	CMakeFiles/Search_Analysis_via_Wikipedia_Graphs.dir/src/main.cpp.obj	f1f3fd8e096fc0de
+783	912	7429547102598244	Search_Analysis_via_Wikipedia_Graphs.exe	72b09265e2ea10d8

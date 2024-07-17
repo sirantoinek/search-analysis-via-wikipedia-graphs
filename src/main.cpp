@@ -1,11 +1,12 @@
 #include "Algorithms.h"
 #include "Gui.h"
 
-int main() {
+int main()
+{
+	Algorithms wikiDatabase; // is an algorithms object so that it can access functions from algs and wikidata
 
-	WikiDatabase wikiDatabase;
-
-	wikiDatabase.useful4Visualization(); // run test code
+	wikiDatabase.useful4Visualization(); // runs visualization test code
+	wikiDatabase.bfsTesting();// runs bfs test code
 
     return 0;
 }
