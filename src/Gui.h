@@ -1,4 +1,4 @@
-// todo: add imGui library
+#include <imgui.h> // referenced https://youtu.be/U1BnzWX194Q?si=tMxZHqrBkEy5TYx1 to set up ImGui
 
 class Gui
 {

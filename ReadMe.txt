@@ -12,3 +12,7 @@ WARNING:
 Be aware that when running, the program may use up to 10 GB of memory.
 Having a minimum of 16 GB of RAM is HIGHLY recommended.
 This is because the dataset is MASSIVE at 163 million rows. (The source csv file was 8.9 GB)
+
+
+Citation: referenced https://youtu.be/U1BnzWX194Q?si=tMxZHqrBkEy5TYx1 when setting up ImGui
+(this should be moved at a later date i just wanted it to be somewhere for now)

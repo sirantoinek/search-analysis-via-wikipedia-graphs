@@ -1,0 +1,5 @@
+{
+  "name": "search-analysis-via-wikipedia-graphs",
+  "version": "1.0",
+  "dependencies": [ "imgui", "glfw3", "glad"]
+}
