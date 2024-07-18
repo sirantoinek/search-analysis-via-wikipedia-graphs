@@ -10,13 +10,17 @@
 class Algorithms : public WikiDatabase
 {
 private:
-
+	// add any private helper functions here:
 
 public:
-	pair<pair<int, double>, vector<string>> breadthFirstSearch(string from, string to);
+	// NOTE FOR ALL 3 ALGORITHMS:
 	// returns a pair containing another pair in first, and a vector of strings in second that contains the path between the "from" and "to" articles.
 	// the pair in first contains the number of nodes inspected as an int (first) and the runtime of the function as a double (second).
-	void bfsTesting(); // function purely for testing purposes
+
+	pair<pair<int, double>, vector<string>> breadthFirstSearch(string from, string to);
+	pair<pair<int, double>, vector<string>> dijkstraSearch(string from, string to); // todo: write me
+	pair<pair<int, double>, vector<string>> bellmanFordSearch(string from, string to); // todo: write me
+	void algTesting(); // function purely for testing purposes
 };
 
 // Class Function Definitions ---------------------
@@ -83,7 +87,19 @@ pair<pair<int, double>, vector<string>> Algorithms::breadthFirstSearch(string fr
 	return results;
 }
 
-void Algorithms::bfsTesting()
+pair<pair<int, double>, vector<string>> Algorithms::dijkstraSearch(string from, string to)
+{
+	// todo: implement dijkstra's alg here. Follow BFS implementation for the return format.
+	return pair<pair<int, double>, vector<string>>();
+}
+
+pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string from, string to)
+{
+	// todo: implement bellman ford alg here. Follow BFS implementation for the return format.
+	return pair<pair<int, double>, vector<string>>();
+}
+
+void Algorithms::algTesting()
 {
 	string from = "World War II"; // enter stating from page here
 	string to = "Tony Hawk's Pro Skater 2"; // enter target page here
@@ -104,4 +120,7 @@ void Algorithms::bfsTesting()
 		cout << results.second[i] << " -> ";
 	}
 	cout << results.second[results.second.size() - 1]; // prints final element with no arrow
+
+	// todo: add more testing code for dijkstra's and bellman ford as they get finished here.
+	// follow the printing layout used in the BFS testing for consistency.
 }

@@ -15,8 +15,7 @@
 		[
 			"_add_executable",
 			"add_executable",
-			"target_link_libraries",
-			"include_directories"
+			"target_link_libraries"
 		],
 		"files" : 
 		[
@@ -31,7 +30,7 @@
 			{
 				"command" : 1,
 				"file" : 1,
-				"line" : 8,
+				"line" : 6,
 				"parent" : 0
 			},
 			{
@@ -43,25 +42,19 @@
 			{
 				"command" : 2,
 				"file" : 1,
-				"line" : 15,
+				"line" : 13,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 1,
-				"line" : 18,
+				"line" : 16,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 1,
-				"line" : 21,
-				"parent" : 0
-			},
-			{
-				"command" : 3,
-				"file" : 1,
-				"line" : 6,
+				"line" : 19,
 				"parent" : 0
 			}
 		]
@@ -84,10 +77,6 @@
 			],
 			"includes" : 
 			[
-				{
-					"backtrace" : 6,
-					"path" : "C:/Users/kev77/CLionProjects/search-analysis-via-wikipedia-graphs/bin"
-				},
 				{
 					"backtrace" : 3,
 					"isSystem" : true,

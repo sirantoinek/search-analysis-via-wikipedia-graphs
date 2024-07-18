@@ -48,7 +48,7 @@ build CMakeFiles/search_analysis_via_wikipedia_graphs.dir/src/main.cpp.obj: CXX_
   DEFINES = -DGLFW_DLL
   DEP_FILE = CMakeFiles\search_analysis_via_wikipedia_graphs.dir\src\main.cpp.obj.d
   FLAGS = -std=gnu++14 -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/kev77/CLionProjects/search-analysis-via-wikipedia-graphs/bin -isystem C:/Users/kev77/CLionProjects/search-analysis-via-wikipedia-graphs/cmake-build-default/vcpkg_installed/x64-windows/include
+  INCLUDES = -isystem C:/Users/kev77/CLionProjects/search-analysis-via-wikipedia-graphs/cmake-build-default/vcpkg_installed/x64-windows/include
   OBJECT_DIR = CMakeFiles\search_analysis_via_wikipedia_graphs.dir
   OBJECT_FILE_DIR = CMakeFiles\search_analysis_via_wikipedia_graphs.dir\src
 
@@ -56,7 +56,7 @@ build CMakeFiles/search_analysis_via_wikipedia_graphs.dir/src/WikiDatabase.cpp.o
   DEFINES = -DGLFW_DLL
   DEP_FILE = CMakeFiles\search_analysis_via_wikipedia_graphs.dir\src\WikiDatabase.cpp.obj.d
   FLAGS = -std=gnu++14 -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/kev77/CLionProjects/search-analysis-via-wikipedia-graphs/bin -isystem C:/Users/kev77/CLionProjects/search-analysis-via-wikipedia-graphs/cmake-build-default/vcpkg_installed/x64-windows/include
+  INCLUDES = -isystem C:/Users/kev77/CLionProjects/search-analysis-via-wikipedia-graphs/cmake-build-default/vcpkg_installed/x64-windows/include
   OBJECT_DIR = CMakeFiles\search_analysis_via_wikipedia_graphs.dir
   OBJECT_FILE_DIR = CMakeFiles\search_analysis_via_wikipedia_graphs.dir\src
 
