@@ -158,74 +158,74 @@ pair<pair<int, double>, vector<string>> Algorithms::dijkstraSearch(string from, 
     return results; // Return the results
 }
 
-pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string from, string to)
-{
+pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string from, string to) {
     pair<pair<int, double>, vector<string>> results;
-    results.first.first = 0; // Initialize the number of nodes inspected
+    results.first.first = 0; // Number of nodes inspected
 
-    int fromId = getID[from]; // Get the ID of the starting node
-    int toId = getID[to]; // Get the ID of the destination node
+    if (getID.find(from) == getID.end() || getID.find(to) == getID.end()) {
+        cout << "One of the specified nodes does not exist." << endl;
+        return results;
+    }
+
+    int fromId = getID[from];
+    int toId = getID[to];
 
     chrono::high_resolution_clock::time_point startTime = chrono::high_resolution_clock::now(); // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
 
+    // Distance and predecessor maps
+    unordered_map<int, double> distances;
+    unordered_map<int, int> predecessors;
 
-    map<int, double> distances; // To store the shortest distance to each node
-    map<int, int> previous; // To store the previous node for the shortest path
-
-    // Initialize distances to infinity for all nodes
-    for (const auto &entry : getID)
-    {
-        distances[entry.second] = numeric_limits<double>::infinity();
+    // Initialize distances and predecessors
+    for (auto& id_pair : getID) {
+        distances[id_pair.second] = numeric_limits<double>::infinity();
+        predecessors[id_pair.second] = -1;
     }
-    distances[fromId] = 0.0; // Distance to the start node is zero
 
-    int V = getID.size(); // Number of vertices
+    distances[fromId] = 0;
 
-    // Relax all edges V-1 times
-    for (int i = 1; i <= V - 1; i++)
-    {
-        bool updated = false; // To check if any update was made in this iteration
-        for (const auto &u : getID)
-        {
-            int uId = u.second; // Current node ID
-            for (const auto &neighbor : wikiDatabase[uId])
-            {
-                int vId = neighbor.first; // Neighbor node ID
-                double weight = neighbor.second; // Weight of the edge
-                // If a shorter path is found
-                if (distances[uId] + weight < distances[vId])
-                {
-                    distances[vId] = distances[uId] + weight; // Update the distance
-                    previous[vId] = uId; // Update the previous node
-                    updated = true; // Mark that an update was made
-                    results.first.first++; // Increment the number of nodes inspected
+    // Relax edges up to V-1 times
+    bool updated;
+    for (int i = 0; i < getID.size() - 1; i++) {
+        updated = false;
+        for (int u = 1; u < wikiDatabase.size(); u++) {
+            for (auto& edge : wikiDatabase[u]) {
+                int v = edge.first;
+                double weight = edge.second;
+                if (distances[u] + weight < distances[v]) {
+                    distances[v] = distances[u] + weight;
+                    predecessors[v] = u;
+                    updated = true;
                 }
             }
         }
         if (!updated) break;
     }
 
-    // If no path is found
-    if (distances[toId] == numeric_limits<double>::infinity())
-    {
-        results.second.clear(); // Clear the results path
-    }
-    else
-    {
-        int temp = toId;
-        while (temp != fromId)
-        {
-            results.second.push_back(getTitle[temp]); // Add the node
-            temp = previous[temp]; // Move to the previous node
+    // Check for negative weight cycles
+    for (int u = 1; u < wikiDatabase.size(); u++) {
+        for (auto& edge : wikiDatabase[u]) {
+            int v = edge.first;
+            double weight = edge.second;
+            if (distances[u] + weight < distances[v]) {
+                cout << "Graph contains a negative weight cycle." << endl;
+                return results;
+            }
         }
-        results.second.push_back(getTitle[temp]); // Add the start node
-        reverse(results.second.begin(), results.second.end()); // referenced https://cplusplus.com/reference/algorithm/reverse/
+    }
+
+    // Reconstruct path if possible
+    if (distances[toId] != numeric_limits<double>::infinity()) {
+        for (int at = toId; at != -1; at = predecessors[at]) {
+            results.second.push_back(getTitle[at]);
+            results.first.first++; // Increment the node count here if only counting the path
+        }
+        reverse(results.second.begin(), results.second.end());
     }
 
     chrono::high_resolution_clock::time_point endTime = chrono::high_resolution_clock::now(); // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
-    results.first.second = chrono::duration<double>((endTime - startTime)).count(); // save time in seconds
-
-    return results; // Return the results
+    results.first.second = chrono::duration<double>((endTime - startTime)).count(); // saves time in seconds
+    return results;
 }
 
 
