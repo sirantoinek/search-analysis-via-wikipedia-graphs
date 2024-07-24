@@ -55,12 +55,12 @@ void Gui::update(GLFWwindow* window)
 
 	int windowWidth, windowHeight;
 	glfwGetFramebufferSize(window, &windowWidth, &windowHeight); // referenced https://www.glfw.org/docs/3.3/window_guide.html (Framebuffer size)
-
-	static_cast<float>(windowWidth);
 	const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-	ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->WorkPos.y), ImGuiCond_Always);
-	ImGui::SetNextWindowSize(ImVec2(main_viewport->WorkPos.x, float(windowHeight)), ImGuiCond_Always);
 
+	// Options window:
+
+	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+	ImGui::SetNextWindowSize(ImVec2(main_viewport->WorkPos.x, float(windowHeight)), ImGuiCond_Always);
 
 	ImGui::Begin("Options:", NULL , window_flags);  // Create a window called "Hello, world!" and append into it.
 
@@ -71,7 +71,21 @@ void Gui::update(GLFWwindow* window)
 	ImGui::SameLine();
 	ImGui::Text("counter = %d", counter);
 
+	ImVec2 optionsWindowSize = ImGui::GetWindowSize(); // referenced imgui demo code https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp
+
 	ImGui::End();
+
+	// Page Links window:
+
+	ImGui::SetNextWindowPos(ImVec2(optionsWindowSize.x, 0), ImGuiCond_Always);
+	ImGui::SetNextWindowSize(ImVec2(float(windowWidth) - optionsWindowSize.x, float(windowHeight)), ImGuiCond_Always);
+
+	ImGui::Begin("Page Links:", NULL, window_flags);  // Create a window called "Hello, world!" and append into it.
+
+	ImGui::Text("Display page links here:");               // Display some text (you can use a format strings too)// Edit bools storing our window open/close state
+
+	ImGui::End();
+
 }
 
 void Gui::render()
