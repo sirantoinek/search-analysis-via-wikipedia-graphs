@@ -8,6 +8,8 @@ The files in binaries.zip must be extracted into the bin folder for the program 
 When compiling the Cmake application, set the "Working directory" in your IDE to the project root folder (should be "Search-Analysis-via-Wikipedia-Graphs").
 Otherwise, the binaries will not be found as the relative path will be invalid.
 
+Also make sure that you are using the visual studio toolchain in your Cmake profile as when using MinGW, dependencies are not found.
+
 WARNING:
 Be aware that when running, the program may use up to 10 GB of memory.
 Having a minimum of 16 GB of RAM is HIGHLY recommended.
@@ -15,4 +17,5 @@ This is because the dataset is MASSIVE at 163 million rows. (The source csv file
 
 
 Citation: referenced https://youtu.be/U1BnzWX194Q?si=tMxZHqrBkEy5TYx1 when setting up ImGui
+(vcpkg.json is entirely cited from this video)
 (this should be moved at a later date i just wanted it to be somewhere for now)

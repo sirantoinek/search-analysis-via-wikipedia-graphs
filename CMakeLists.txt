@@ -10,10 +10,11 @@ add_executable(search_analysis_via_wikipedia_graphs
         src/WikiDatabase.cpp)
 
 find_package(glad CONFIG REQUIRED)
-target_link_libraries(search_analysis_via_wikipedia_graphs PRIVATE glad::glad)
+target_link_libraries(search_analysis_via_wikipedia_graphs PUBLIC glad::glad)
 
 find_package(glfw3 CONFIG REQUIRED)
-target_link_libraries(search_analysis_via_wikipedia_graphs PRIVATE glfw)
+target_link_libraries(search_analysis_via_wikipedia_graphs PUBLIC glfw)
 
 find_package(imgui CONFIG REQUIRED)
-target_link_libraries(search_analysis_via_wikipedia_graphs PRIVATE imgui::imgui)
+target_link_libraries(search_analysis_via_wikipedia_graphs PUBLIC imgui::imgui)
+
