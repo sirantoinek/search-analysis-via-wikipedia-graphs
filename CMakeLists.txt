@@ -9,8 +9,7 @@ add_executable(search_analysis_via_wikipedia_graphs
         src/Algorithms.h
         src/Gui.h
         src/WikiDatabase.cpp
-        src/imgui_combo_autoselect.cpp
-        src/imgui_combo_autoselect.cpp)
+)
 
 find_package(glad CONFIG REQUIRED)
 target_link_libraries(search_analysis_via_wikipedia_graphs PUBLIC glad::glad)

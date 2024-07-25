@@ -28,6 +28,6 @@ imgui provides CMake targets:
   target_link_libraries(main PRIVATE imgui::imgui)
 
 -- Running vcpkg install - done
--- Configuring done (2.2s)
+-- Configuring done (2.1s)
 -- Generating done (0.0s)
 -- Build files have been written to: C:/Users/kev77/CLionProjects/search-analysis-via-wikipedia-graphs/cmake-build-release-visual-studio

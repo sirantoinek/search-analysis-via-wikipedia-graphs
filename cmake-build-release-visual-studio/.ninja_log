@@ -1,17 +1,6 @@
 # ninja log v5
 7	542	7435719268912785	CMakeFiles/search_analysis_via_wikipedia_graphs.dir/src/imgui_combo_autoselect.cpp.obj	4d9c7616e9c70f8a
 5	529	7435719267331428	CMakeFiles/search_analysis_via_wikipedia_graphs.dir/src/WikiDatabase.cpp.obj	3e4c8b957cca4813
-2	526	7435883327413051	CMakeFiles/search_analysis_via_wikipedia_graphs.dir/src/main.cpp.obj	f7583b169a33e91f
-526	888	7435883328228752	search_analysis_via_wikipedia_graphs.exe	896383953c642971
-4	510	7435887531386586	CMakeFiles/search_analysis_via_wikipedia_graphs.dir/src/main.cpp.obj	f7583b169a33e91f
-510	868	7435887532167260	search_analysis_via_wikipedia_graphs.exe	896383953c642971
-3	516	7435887689509626	CMakeFiles/search_analysis_via_wikipedia_graphs.dir/src/main.cpp.obj	f7583b169a33e91f
-516	870	7435887690285299	search_analysis_via_wikipedia_graphs.exe	896383953c642971
-2	511	7435889157403604	CMakeFiles/search_analysis_via_wikipedia_graphs.dir/src/main.cpp.obj	f7583b169a33e91f
-512	886	7435889158199286	search_analysis_via_wikipedia_graphs.exe	896383953c642971
-2	524	7435893065588300	CMakeFiles/search_analysis_via_wikipedia_graphs.dir/src/main.cpp.obj	f7583b169a33e91f
-524	881	7435893066367319	search_analysis_via_wikipedia_graphs.exe	896383953c642971
-3	518	7435896534680467	CMakeFiles/search_analysis_via_wikipedia_graphs.dir/src/main.cpp.obj	f7583b169a33e91f
-519	870	7435896535441118	search_analysis_via_wikipedia_graphs.exe	896383953c642971
 3	510	7435897903797993	CMakeFiles/search_analysis_via_wikipedia_graphs.dir/src/main.cpp.obj	f7583b169a33e91f
 511	865	7435897904603716	search_analysis_via_wikipedia_graphs.exe	896383953c642971
+2	354	7435909443783330	search_analysis_via_wikipedia_graphs.exe	7966201c8c40989b

@@ -67,15 +67,6 @@ build CMakeFiles\search_analysis_via_wikipedia_graphs.dir\src\WikiDatabase.cpp.o
   TARGET_COMPILE_PDB = CMakeFiles\search_analysis_via_wikipedia_graphs.dir\
   TARGET_PDB = search_analysis_via_wikipedia_graphs.pdb
 
-build CMakeFiles\search_analysis_via_wikipedia_graphs.dir\src\imgui_combo_autoselect.cpp.obj: CXX_COMPILER__search_analysis_via_wikipedia_graphs_unscanned_Release C$:\Users\kev77\CLionProjects\search-analysis-via-wikipedia-graphs\src\imgui_combo_autoselect.cpp || cmake_object_order_depends_target_search_analysis_via_wikipedia_graphs
-  DEFINES = -DGLFW_DLL
-  FLAGS = /DWIN32 /D_WINDOWS /EHsc -O3 -MD
-  INCLUDES = -external:IC:\Users\kev77\CLionProjects\search-analysis-via-wikipedia-graphs\cmake-build-release-visual-studio\vcpkg_installed\x64-windows\include -external:W0
-  OBJECT_DIR = CMakeFiles\search_analysis_via_wikipedia_graphs.dir
-  OBJECT_FILE_DIR = CMakeFiles\search_analysis_via_wikipedia_graphs.dir\src
-  TARGET_COMPILE_PDB = CMakeFiles\search_analysis_via_wikipedia_graphs.dir\
-  TARGET_PDB = search_analysis_via_wikipedia_graphs.pdb
-
 
 # =============================================================================
 # Link build statements for EXECUTABLE target search_analysis_via_wikipedia_graphs
@@ -84,7 +75,7 @@ build CMakeFiles\search_analysis_via_wikipedia_graphs.dir\src\imgui_combo_autose
 #############################################
 # Link the executable search_analysis_via_wikipedia_graphs.exe
 
-build search_analysis_via_wikipedia_graphs.exe: CXX_EXECUTABLE_LINKER__search_analysis_via_wikipedia_graphs_Release CMakeFiles\search_analysis_via_wikipedia_graphs.dir\src\main.cpp.obj CMakeFiles\search_analysis_via_wikipedia_graphs.dir\src\WikiDatabase.cpp.obj CMakeFiles\search_analysis_via_wikipedia_graphs.dir\src\imgui_combo_autoselect.cpp.obj | vcpkg_installed\x64-windows\lib\glad.lib vcpkg_installed\x64-windows\lib\imgui.lib vcpkg_installed\x64-windows\lib\glfw3dll.lib
+build search_analysis_via_wikipedia_graphs.exe: CXX_EXECUTABLE_LINKER__search_analysis_via_wikipedia_graphs_Release CMakeFiles\search_analysis_via_wikipedia_graphs.dir\src\main.cpp.obj CMakeFiles\search_analysis_via_wikipedia_graphs.dir\src\WikiDatabase.cpp.obj | vcpkg_installed\x64-windows\lib\glad.lib vcpkg_installed\x64-windows\lib\imgui.lib vcpkg_installed\x64-windows\lib\glfw3dll.lib
   FLAGS = /DWIN32 /D_WINDOWS /EHsc -O3 -MD
   LINK_FLAGS = /machine:x64 /INCREMENTAL:NO /subsystem:console
   LINK_LIBRARIES = vcpkg_installed\x64-windows\lib\glad.lib  vcpkg_installed\x64-windows\lib\imgui.lib  vcpkg_installed\x64-windows\lib\glfw3dll.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib

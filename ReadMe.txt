@@ -17,4 +17,4 @@ This is because the dataset is MASSIVE at 163 million rows. (The source csv file
 
 Citation: referenced https://youtu.be/U1BnzWX194Q?si=tMxZHqrBkEy5TYx1 when setting up ImGui
 (vcpkg.json is entirely cited from this video)
-(this should be moved at a later date i just wanted it to be somewhere for now)
+(this should be moved at a later date I just wanted it to be somewhere for now)
