@@ -162,69 +162,81 @@ pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string fro
     pair<pair<int, double>, vector<string>> results;
     results.first.first = 0; // Number of nodes inspected
 
+
+    /*
     if (getID.find(from) == getID.end() || getID.find(to) == getID.end()) {
         cout << "One of the specified nodes does not exist." << endl;
         return results;
     }
+    */
 
     int fromId = getID[from];
     int toId = getID[to];
 
-    chrono::high_resolution_clock::time_point startTime = chrono::high_resolution_clock::now(); // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
+    // Start timing
+    auto startTime = chrono::high_resolution_clock::now();
 
-    // Distance and predecessor maps
-    unordered_map<int, double> distances;
-    unordered_map<int, int> predecessors;
+	// Maps for storing distances, predecessors, and queue status
+    unordered_map<int, double> distances; // Distance from the start node
+    unordered_map<int, int> predecessors; // Predecessor of each node in the path
+    unordered_map<int, bool> inQueue; // Whether a node is currently in the queue
 
-    // Initialize distances and predecessors
-    for (auto& id_pair : getID) {
+	// Initialize all nodes' distances to infinity, predecessors to -1, and inQueue to false
+    for (const auto& id_pair : getID) {
         distances[id_pair.second] = numeric_limits<double>::infinity();
         predecessors[id_pair.second] = -1;
+        inQueue[id_pair.second] = false;
     }
 
-    distances[fromId] = 0;
 
-    // Relax edges up to V-1 times
-    bool updated;
-    for (int i = 0; i < getID.size() - 1; i++) {
-        updated = false;
-        for (int u = 1; u < wikiDatabase.size(); u++) {
-            for (auto& edge : wikiDatabase[u]) {
-                int v = edge.first;
-                double weight = edge.second;
-                if (distances[u] + weight < distances[v]) {
-                    distances[v] = distances[u] + weight;
-                    predecessors[v] = u;
-                    updated = true;
+	// Set the distance to the starting node as 0
+    distances[fromId] = 0;
+    queue<int> q;
+    q.push(fromId); // Start with the source node
+    inQueue[fromId] = true;
+
+    // Main loop
+    while (!q.empty()) {
+        int u = q.front();// Get the next node to process
+        q.pop(); // Remove it from the queue
+        inQueue[u] = false;
+
+        // inspection counter
+        results.first.first++;
+
+        // Ensure u is within bounds of the vector
+        if (u >= wikiDatabase.size()) continue;
+    	// Iterate over all edges starting from node u
+        for (const auto& edge : wikiDatabase[u]) {
+            int v = edge.first;
+            double weight = 1; // unweighted graph
+
+        	// Check if a shorter path to node v has been found
+            if (distances[u] + weight < distances[v]) {
+                distances[v] = distances[u] + weight;
+                predecessors[v] = u;
+
+                // Only add to the queue if not already in it
+                if (!inQueue[v]) {
+                    q.push(v);
+                    inQueue[v] = true;
                 }
             }
         }
-        if (!updated) break;
     }
 
-    // Check for negative weight cycles
-    for (int u = 1; u < wikiDatabase.size(); u++) {
-        for (auto& edge : wikiDatabase[u]) {
-            int v = edge.first;
-            double weight = edge.second;
-            if (distances[u] + weight < distances[v]) {
-                cout << "Graph contains a negative weight cycle." << endl;
-                return results;
-            }
-        }
-    }
-
-    // Reconstruct path if possible
+    // Reconstruct path
     if (distances[toId] != numeric_limits<double>::infinity()) {
         for (int at = toId; at != -1; at = predecessors[at]) {
             results.second.push_back(getTitle[at]);
-            results.first.first++; // Increment the node count here if only counting the path
         }
-        reverse(results.second.begin(), results.second.end());
+        reverse(results.second.begin(), results.second.end());//// referenced https://cplusplus.com/reference/algorithm/reverse/
     }
 
-    chrono::high_resolution_clock::time_point endTime = chrono::high_resolution_clock::now(); // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
+    // End timing
+    auto endTime = chrono::high_resolution_clock::now();// // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
     results.first.second = chrono::duration<double>((endTime - startTime)).count(); // saves time in seconds
+
     return results;
 }
 
