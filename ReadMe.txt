@@ -11,8 +11,7 @@ Otherwise, the binaries will not be found as the relative path will be invalid.
 Also make sure that you are using the visual studio toolchain in your Cmake profile as when using MinGW, dependencies are not found.
 
 WARNING:
-Be aware that when running, the program may use up to 10 GB of memory.
-Having a minimum of 16 GB of RAM is HIGHLY recommended.
+Be aware that when running, the program may use up to 7 GB of memory.
 This is because the dataset is MASSIVE at 163 million rows. (The source csv file was 8.9 GB)
 
 

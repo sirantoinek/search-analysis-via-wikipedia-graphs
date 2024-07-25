@@ -1,3 +1,5 @@
+#pragma once
+
 #include <chrono>
 #include <set>
 #include <queue>
@@ -107,7 +109,7 @@ void Algorithms::algTesting()
 
 	cout << "\nBFS TESTING: \n\nStarting at: \"" << from <<"\"\nSearching for: \"" << to << "\"\n";
 	cout << "Shortest Path Length: " << to_string(results.second.size()) << endl;
-	cout << "Number of Pages Inspected: " << to_string(results.first.first) << endl;
+	cout << "Number of Pages Inspected: " << to_string(results.first.first - 1) << endl;
 	cout << "Runtime: " << to_string(results.first.second) << " seconds" <<endl;
 
 	if(results.second.size() == 0)

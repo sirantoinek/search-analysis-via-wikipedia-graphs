@@ -1,10 +1,14 @@
 // referenced https://youtu.be/U1BnzWX194Q?si=tMxZHqrBkEy5TYx1 to set up ImGui
 // as well as https://github.com/ocornut/imgui/blob/master/examples/example_glfw_opengl3/main.cpp (imgui example program)
+#pragma once
+
 #include <imgui.h>
+#include "imgui_stdlib.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include <string>
 
 class Gui
 {
@@ -13,7 +17,7 @@ private:
 
 public:
 	void init(GLFWwindow* window, const char* glsl_version);
-	void update(GLFWwindow* window);
+	void update(GLFWwindow* window, Algorithms& wikiDatabase);
 	void render();
 	void shutdown(GLFWwindow* window);
 
@@ -35,16 +39,12 @@ void Gui::init(GLFWwindow* window, const char* glsl_version)
 	ImGui::StyleColorsDark();
 }
 
-void Gui::update(GLFWwindow* window)
+void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
 {
 	// Start the Dear ImGui frame
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-
-
-	static float f = 0.0f;
-	static int counter = 0;
 
 	ImGuiWindowFlags window_flags = 0; //setting flags for Begin() referenced https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp
 	window_flags |= ImGuiWindowFlags_NoTitleBar;
@@ -62,17 +62,89 @@ void Gui::update(GLFWwindow* window)
 	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
 	ImGui::SetNextWindowSize(ImVec2(main_viewport->WorkPos.x, float(windowHeight)), ImGuiCond_Always);
 
-	ImGui::Begin("Options:", NULL , window_flags);  // Create a window called "Hello, world!" and append into it.
+	ImGui::Begin("Options:", NULL, window_flags);  // Create a window
 
-	ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)// Edit bools storing our window open/close state
-	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-	if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-		counter++;
+	ImGui::Text("Wiki Article Selection:"); // Display some text (you can use a format strings too)// Edit bools storing our window open/close state
 	ImGui::SameLine();
-	ImGui::Text("counter = %d", counter);
+	ImGui::TextDisabled("(?)");
+	if (ImGui::BeginItemTooltip())
+	{
+		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+		ImGui::TextUnformatted("Titles are case sensitive!\n\nAlso be aware that if the page shows \"Not Responding\",\nit is likely still processing in the background!");
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip();
+	}
+	static char bufFrom[200] = "";
+	static char bufTo[200] = "";
+	ImGui::InputTextWithHint("Starting Wiki Article", "enter title here",     bufFrom, 200);
+	ImGui::InputTextWithHint("Target Wiki Article", "enter title here",     bufTo, 200);
+
+	ImGui::Text(" ");
+
+	ImGui::Text("Select Searching Algorithm:");
+	static int e = 0;
+	ImGui::RadioButton("Breadth-first search", &e, 0);
+	ImGui::RadioButton("Dijkstra's Algorithm", &e, 1);
+	ImGui::RadioButton("Bellman-Ford Algorithm", &e, 2);
+
+	ImGui::Text(" ");
+
+	static bool pressed = false, invalid = false;
+	static pair<pair<int, double>, vector<string>> results;
+	if(ImGui::Button("Find Shortest Connecting Path!"))
+	{
+		glfwWaitEvents();
+		pressed = true;
+		invalid = false;
+		std::string from(bufFrom, strlen(bufFrom));
+		std::string to(bufTo, strlen(bufTo));
+
+		if (wikiDatabase.getID.find(from) == wikiDatabase.getID.end() || wikiDatabase.getID.find(to) == wikiDatabase.getID.end())
+		{
+			pressed = false;
+			invalid = true;
+		}
+
+		if(!invalid)
+		{
+			if(e == 0) results = wikiDatabase.breadthFirstSearch(from, to);
+			else if(e == 1) results = wikiDatabase.dijkstraSearch(from, to);
+			else if(e == 2) results = wikiDatabase.bellmanFordSearch(from, to);
+		}
+	}
+
+	ImGui::Text(" ");
+
+	ImGui::Text("Results:");
+	ImGui::Text("Shortest Path Length:");
+	if(pressed & !invalid)
+	{
+		ImGui::SameLine();
+		if(results.second.empty()) ImGui::Text("No connection found");
+		else ImGui::Text("%d", int(results.second.size() - 1));
+	}
+	ImGui::Text("Number of Nodes Inspected:");
+	if(pressed & !invalid)
+	{
+		ImGui::SameLine();
+		ImGui::Text("%d", results.first.first);
+	}
+	ImGui::Text("Runtime:");
+	if(pressed & !invalid)
+	{
+		ImGui::SameLine();
+		ImGui::Text("%f", results.first.second);
+		ImGui::SameLine();
+		ImGui::Text("seconds");
+	}
+	if(invalid)
+	{
+		ImGui::Text(" ");
+		ImGui::Text("At least one of the given titles does not exist.");
+		ImGui::Text("Please try again.");
+	}
 
 	ImVec2 optionsWindowSize = ImGui::GetWindowSize(); // referenced imgui demo code https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp
-
 	ImGui::End();
 
 	// Page Links window:
@@ -80,7 +152,7 @@ void Gui::update(GLFWwindow* window)
 	ImGui::SetNextWindowPos(ImVec2(optionsWindowSize.x, 0), ImGuiCond_Always);
 	ImGui::SetNextWindowSize(ImVec2(float(windowWidth) - optionsWindowSize.x, float(windowHeight)), ImGuiCond_Always);
 
-	ImGui::Begin("Page Links:", NULL, window_flags);  // Create a window called "Hello, world!" and append into it.
+	ImGui::Begin("Page Links:", NULL, window_flags);  // Create a window
 
 	ImGui::Text("Display page links here:");               // Display some text (you can use a format strings too)// Edit bools storing our window open/close state
 
