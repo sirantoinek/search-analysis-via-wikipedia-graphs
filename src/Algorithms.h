@@ -20,8 +20,8 @@ public:
 	// the pair in first contains the number of nodes inspected as an int (first) and the runtime of the function as a double (second).
 
 	pair<pair<int, double>, vector<string>> breadthFirstSearch(string from, string to);
-	pair<pair<int, double>, vector<string>> dijkstraSearch(string from, string to); // todo: write me
-	pair<pair<int, double>, vector<string>> bellmanFordSearch(string from, string to); // todo: write me
+	pair<pair<int, double>, vector<string>> dijkstraSearch(string from, string to); 
+	pair<pair<int, double>, vector<string>> bellmanFordSearch(string from, string to); // need debugging
 	void algTesting(); // function purely for testing purposes
 };
 
@@ -92,38 +92,238 @@ pair<pair<int, double>, vector<string>> Algorithms::breadthFirstSearch(string fr
 
 pair<pair<int, double>, vector<string>> Algorithms::dijkstraSearch(string from, string to)
 {
-	// todo: implement dijkstra's alg here. Follow BFS implementation for the return format.
-	return pair<pair<int, double>, vector<string>>();
+    pair<pair<int, double>, vector<string>> results;
+    results.first.first = 0; // Initialize the number of nodes inspected
+
+    int fromId = getID[from]; // Get the ID of the starting node
+    int toId = getID[to]; // Get the ID of the destination node
+
+    chrono::high_resolution_clock::time_point startTime = chrono::high_resolution_clock::now();// referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
+
+
+    map<int, int> previous; // To store the previous node for the shortest path
+    map<int, double> distances; // To store the shortest distance to each node
+    set<pair<double, int>> nodes; // Set of (distance, node) pairs for Dijkstra's algorithm
+
+    // Initialize distances to infinity for all nodes
+    for (const auto &entry : getID)
+    {
+        distances[entry.second] = numeric_limits<double>::infinity();
+    }
+    distances[fromId] = 0.0; // Distance to the start node is zero
+    nodes.insert({0.0, fromId}); // Insert the start node with distance zero
+
+    while (!nodes.empty())
+    {
+        auto smallest = *nodes.begin(); // Get the node with the smallest distance
+        nodes.erase(nodes.begin()); // Remove the node from the set
+        int currentPage = smallest.second; // Get the node ID
+
+        results.first.first++; // Increment the number of nodes inspected
+
+        if (currentPage == toId) // if destination node stop
+        {
+            break;
+        }
+
+        // Iterate through all neighbors of the current node
+        for (const auto &neighbor : wikiDatabase[currentPage])
+        {
+            int neighborId = neighbor.first; // Neighbor node ID
+            double weight = 1.0; // Weight of the edge
+            double alt = distances[currentPage] + weight; // Calculate alternative path distance
+            if (alt < distances[neighborId]) // If a shorter path is found
+            {
+                nodes.erase({distances[neighborId], neighborId}); // Remove the old distance
+                distances[neighborId] = alt; // Update to the new shorter distance
+                previous[neighborId] = currentPage; // Update the previous node
+                nodes.insert({alt, neighborId}); // Insert the updated distance
+            }
+        }
+    }
+
+    // If a path was found, reconstruct the path
+    if (previous.find(toId) != previous.end() || fromId == toId)
+    {
+        int temp = toId;
+        while (temp != fromId)
+        {
+            results.second.push_back(getTitle[temp]); // Add the node to the path
+            temp = previous[temp]; // Move to the previous node
+        }
+        results.second.push_back(getTitle[temp]); // Add the start node
+        reverse(results.second.begin(), results.second.end()); // referenced https://cplusplus.com/reference/algorithm/reverse/
+    }
+
+    chrono::high_resolution_clock::time_point endTime = chrono::high_resolution_clock::now(); // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
+    results.first.second = chrono::duration<double>((endTime - startTime)).count(); // saves time in seconds
+
+    return results; // Return the results
 }
 
-pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string from, string to)
-{
-	// todo: implement bellman ford alg here. Follow BFS implementation for the return format.
-	return pair<pair<int, double>, vector<string>>();
+pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string from, string to) {
+    pair<pair<int, double>, vector<string>> results;
+    results.first.first = 0; // Number of nodes inspected
+
+
+    /*
+    if (getID.find(from) == getID.end() || getID.find(to) == getID.end()) {
+        cout << "One of the specified nodes does not exist." << endl;
+        return results;
+    }
+    */
+
+    int fromId = getID[from];
+    int toId = getID[to];
+
+    // Start timing
+    auto startTime = chrono::high_resolution_clock::now();
+
+	// Maps for storing distances, predecessors, and queue status
+    unordered_map<int, double> distances; // Distance from the start node
+    unordered_map<int, int> predecessors; // Predecessor of each node in the path
+    unordered_map<int, bool> inQueue; // Whether a node is currently in the queue
+
+	// Initialize all nodes' distances to infinity, predecessors to -1, and inQueue to false
+    for (const auto& id_pair : getID) {
+        distances[id_pair.second] = numeric_limits<double>::infinity();
+        predecessors[id_pair.second] = -1;
+        inQueue[id_pair.second] = false;
+    }
+
+
+	// Set the distance to the starting node as 0
+    distances[fromId] = 0;
+    //queue<int> q;
+    // q.push(fromId); // Start with the source node
+    deque<int> q;
+    q.push_back(fromId);
+
+    inQueue[fromId] = true;
+
+    bool distanceUpdated = false;
+    // main loop
+    for (int i = 0; i < getID.size() - 1; ++i) {
+    	distanceUpdated = false;
+      for (size_t qSize = q.size(); qSize >0; --qSize) {
+      	int u = q.front();
+        q.pop_front();
+        inQueue[u] = false;
+
+        results.first.first++;
+
+        if (u >= wikiDatabase.size()) continue;
+
+        for (const auto& edge : wikiDatabase[u]) {
+        	int v = edge.first;
+          double weight = 1;
+
+          // Check if a shorter path to node v has been found
+            if (distances[u] + weight < distances[v]) {
+                distances[v] = distances[u] + weight;
+                predecessors[v] = u;
+
+                // Only add to the queue if not already in it
+                if (!inQueue[v]) {
+                    q.push_back(v);
+                    inQueue[v] = true;
+                }
+                distanceUpdated = true;
+            }
+
+
+        }
+      }
+
+      if (!distanceUpdated) {
+      	break;
+      }
+    }
+
+    // Reconstruct path
+    if (distances[toId] != numeric_limits<double>::infinity()) {
+        for (int at = toId; at != fromId; at = predecessors[at]) {
+            results.second.push_back(getTitle[at]);
+        }
+        results.second.push_back(getTitle[fromId]);
+        reverse(results.second.begin(), results.second.end());//// referenced https://cplusplus.com/reference/algorithm/reverse/
+    }
+
+    // End timing
+    auto endTime = chrono::high_resolution_clock::now();// // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
+    results.first.second = chrono::duration<double>((endTime - startTime)).count(); // saves time in seconds
+
+		return results;
 }
+
 
 void Algorithms::algTesting()
 {
-	string from = "World War II"; // enter stating from page here
-	string to = "Tony Hawk's Pro Skater 2"; // enter target page here
-	pair<pair<int, double>, vector<string>> results = breadthFirstSearch(from, to);
+    string from = "World War II"; // enter starting from page here
+    string to = "Tony Hawk's Pro Skater 2"; // enter target page here
+    pair<pair<int, double>, vector<string>> results;
 
-	cout << "\nBFS TESTING: \n\nStarting at: \"" << from <<"\"\nSearching for: \"" << to << "\"\n";
-	cout << "Shortest Path Length: " << to_string(results.second.size()) << endl;
-	cout << "Number of Pages Inspected: " << to_string(results.first.first - 1) << endl;
-	cout << "Runtime: " << to_string(results.first.second) << " seconds" <<endl;
+    // Breadth-First Search
+    results = breadthFirstSearch(from, to);
 
-	if(results.second.size() == 0)
-	{
-		cout << "Page Connection Not Found!";
-		return;
-	}
-	for(int i = 0; i < results.second.size() - 1; i++) // prints all but final element
-	{
-		cout << results.second[i] << " -> ";
-	}
-	cout << results.second[results.second.size() - 1]; // prints final element with no arrow
+    cout << "\nBFS TESTING: \n\nStarting at: \"" << from <<"\"\nSearching for: \"" << to << "\"\n";
+    cout << "Shortest Path Length: " << to_string(results.second.size()) << endl;
+    cout << "Number of Pages Inspected: " << to_string(results.first.first) << endl;
+    cout << "Runtime: " << to_string(results.first.second) << " seconds" <<endl;
 
-	// todo: add more testing code for dijkstra's and bellman ford as they get finished here.
-	// follow the printing layout used in the BFS testing for consistency.
+    if(results.second.size() == 0)
+    {
+        cout << "Page Connection Not Found!";
+    }
+    else
+    {
+        for(int i = 0; i < results.second.size() - 1; i++) // prints all but final element
+        {
+            cout << results.second[i] << " -> ";
+        }
+        cout << results.second[results.second.size() - 1]; // prints final element with no arrow
+    }
+
+    // Dijkstra's Algorithm
+    results = dijkstraSearch(from, to);
+
+    cout << "\n\nDijkstra's TESTING: \n\nStarting at: \"" << from <<"\"\nSearching for: \"" << to << "\"\n";
+    cout << "Shortest Path Length: " << to_string(results.second.size()) << endl;
+    cout << "Number of Pages Inspected: " << to_string(results.first.first) << endl;
+    cout << "Runtime: " << to_string(results.first.second) << " seconds" <<endl;
+
+    if(results.second.size() == 0)
+    {
+        cout << "Page Connection Not Found!";
+    }
+    else
+    {
+        for(int i = 0; i < results.second.size() - 1; i++) // prints all but final element
+        {
+            cout << results.second[i] << " -> ";
+        }
+        cout << results.second[results.second.size() - 1]; // prints final element with no arrow
+    }
+
+    // Bellman-Ford Algorithm
+    results = bellmanFordSearch(from, to);
+
+    cout << "\n\nBellman-Ford TESTING: \n\nStarting at: \"" << from <<"\"\nSearching for: \"" << to << "\"\n";
+    cout << "Shortest Path Length: " << to_string(results.second.size()) << endl;
+    cout << "Number of Pages Inspected: " << to_string(results.first.first) << endl;
+    cout << "Runtime: " << to_string(results.first.second) << " seconds" <<endl;
+
+    if(results.second.size() == 0)
+    {
+        cout << "Page Connection Not Found!";
+    }
+    else
+    {
+        for(int i = 0; i < results.second.size() - 1; i++) // prints all but final element
+        {
+            cout << results.second[i] << " -> ";
+        }
+        cout << results.second[results.second.size() - 1]; // prints final element with no arrow
+    }
 }
+
