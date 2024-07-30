@@ -127,7 +127,7 @@ pair<pair<int, double>, vector<string>> Algorithms::dijkstraSearch(string from, 
         for (const auto &neighbor : wikiDatabase[currentPage])
         {
             int neighborId = neighbor.first; // Neighbor node ID
-            double weight = neighbor.second; // Weight of the edge
+            double weight = 1.0; // Weight of the edge
             double alt = distances[currentPage] + weight; // Calculate alternative path distance
             if (alt < distances[neighborId]) // If a shorter path is found
             {
@@ -191,45 +191,58 @@ pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string fro
 
 	// Set the distance to the starting node as 0
     distances[fromId] = 0;
-    queue<int> q;
-    q.push(fromId); // Start with the source node
+    //queue<int> q;
+    // q.push(fromId); // Start with the source node
+    deque<int> q;
+    q.push_back(fromId);
+
     inQueue[fromId] = true;
 
-    // Main loop
-    while (!q.empty()) {
-        int u = q.front();// Get the next node to process
-        q.pop(); // Remove it from the queue
+    bool distanceUpdated = false;
+    // main loop
+    for (int i = 0; i < getID.size() - 1; ++i) {
+    	distanceUpdated = false;
+      for (size_t qSize = q.size(); qSize >0; --qSize) {
+      	int u = q.front();
+        q.pop_front();
         inQueue[u] = false;
 
-        // inspection counter
         results.first.first++;
 
-        // Ensure u is within bounds of the vector
         if (u >= wikiDatabase.size()) continue;
-    	// Iterate over all edges starting from node u
-        for (const auto& edge : wikiDatabase[u]) {
-            int v = edge.first;
-            double weight = 1; // unweighted graph
 
-        	// Check if a shorter path to node v has been found
+        for (const auto& edge : wikiDatabase[u]) {
+        	int v = edge.first;
+          double weight = 1;
+
+          // Check if a shorter path to node v has been found
             if (distances[u] + weight < distances[v]) {
                 distances[v] = distances[u] + weight;
                 predecessors[v] = u;
 
                 // Only add to the queue if not already in it
                 if (!inQueue[v]) {
-                    q.push(v);
+                    q.push_back(v);
                     inQueue[v] = true;
                 }
+                distanceUpdated = true;
             }
+
+
         }
+      }
+
+      if (!distanceUpdated) {
+      	break;
+      }
     }
 
     // Reconstruct path
     if (distances[toId] != numeric_limits<double>::infinity()) {
-        for (int at = toId; at != -1; at = predecessors[at]) {
+        for (int at = toId; at != fromId; at = predecessors[at]) {
             results.second.push_back(getTitle[at]);
         }
+        results.second.push_back(getTitle[fromId]);
         reverse(results.second.begin(), results.second.end());//// referenced https://cplusplus.com/reference/algorithm/reverse/
     }
 
@@ -237,7 +250,7 @@ pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string fro
     auto endTime = chrono::high_resolution_clock::now();// // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
     results.first.second = chrono::duration<double>((endTime - startTime)).count(); // saves time in seconds
 
-    return results;
+		return results;
 }
 
 
