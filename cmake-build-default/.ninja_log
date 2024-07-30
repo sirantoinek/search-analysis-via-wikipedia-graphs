@@ -1,6 +1,0 @@
-# ninja log v5
-836	1323	7429651639420974	search_analysis_via_wikipedia_graphs.exe	49867b8a7237a853
-1197	1697	7429570202289668	Search_Analysis_via_Wikipedia_Graphs.exe	72b09265e2ea10d8
-8	391	7429651633655006	CMakeFiles/search_analysis_via_wikipedia_graphs.dir/src/WikiDatabase.cpp.obj	d6213144749c0d7f
-5	835	7429651638083803	CMakeFiles/search_analysis_via_wikipedia_graphs.dir/src/main.cpp.obj	6ff96af98aa14370
-2	2352	7429676146232809	build.ninja	23a540516168464b

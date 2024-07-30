@@ -1,3 +1,5 @@
+#pragma once
+
 #include <chrono>
 #include <set>
 #include <queue>
@@ -37,6 +39,7 @@ pair<pair<int, double>, vector<string>> Algorithms::breadthFirstSearch(string fr
 	chrono::high_resolution_clock::time_point startTime = chrono::high_resolution_clock::now(); // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
 
 	map<int, int> visited; // key is the inserted article and value is the article that it came from (useful for finding shortest path)
+	// predecessor idea inspired by dijkstra's algorithm (slide 3 M11_01_COP3530_F23_Kapoor.pptx)
 	queue<int> q;
 	visited[fromId] = fromId;
 	vector<pair<int, int>> neighbors; // second is a junk value (weight). this strategy prevents the need to loop through an articles connections.
