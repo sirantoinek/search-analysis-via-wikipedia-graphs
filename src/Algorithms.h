@@ -165,14 +165,6 @@ pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string fro
     pair<pair<int, double>, vector<string>> results;
     results.first.first = 0; // Number of nodes inspected
 
-
-    /*
-    if (getID.find(from) == getID.end() || getID.find(to) == getID.end()) {
-        cout << "One of the specified nodes does not exist." << endl;
-        return results;
-    }
-    */
-
     int fromId = getID[from];
     int toId = getID[to];
 
