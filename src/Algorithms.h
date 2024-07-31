@@ -20,8 +20,8 @@ public:
 
 	pair<pair<int, double>, vector<string>> breadthFirstSearch(string from, string to);
 	pair<pair<int, double>, vector<string>> dijkstraSearch(string from, string to); 
-	pair<pair<int, double>, vector<string>> bellmanFordSearch(string from, string to); // need debugging
-	void algTesting(); // function purely for testing purposes
+	pair<pair<int, double>, vector<string>> bellmanFordSearch(string from, string to);
+	void algTesting(); // function purely for testing in the terminal (and not in the gui)
 };
 
 // Class Function Definitions ---------------------
@@ -40,12 +40,12 @@ pair<pair<int, double>, vector<string>> Algorithms::breadthFirstSearch(string fr
 	unordered_map<int, int> visited; // key is the inserted article and value is the article that it came from (useful for finding shortest path)
 	// predecessor idea inspired by dijkstra's algorithm (slide 3 M11_01_COP3530_F23_Kapoor.pptx)
 	queue<int> q;
-	visited[fromId] = fromId;
 	vector<pair<int, int>> neighbors; // second is a junk value (weight). this strategy prevents the need to loop through an articles connections.
 
+	visited[fromId] = fromId;
 	q.push(fromId);
 
-	while(!q.empty())
+	while(!q.empty()) // main loop
 	{
 		int currentPage = q.front();
 		results.first.first ++; // increment nodes inspected
@@ -84,12 +84,12 @@ pair<pair<int, double>, vector<string>> Algorithms::breadthFirstSearch(string fr
 	}
 
 	chrono::high_resolution_clock::time_point endTime = chrono::high_resolution_clock::now(); // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
-	results.first.second = chrono::duration<double>((endTime - startTime)).count(); // saves time in seconds (should this be different? milliseconds perhaps?)
+	results.first.second = chrono::duration<double>((endTime - startTime)).count(); // saves time in seconds
 
 	return results;
 }
 
-pair<pair<int, double>, vector<string>> Algorithms::dijkstraSearch(string from, string to)
+pair<pair<int, double>, vector<string>> Algorithms::dijkstraSearch(string from, string to) // referenced M11_02_COP3530_F23_Kapoor.pptx slide 3 (dijkstra pseudocode)
 {
     pair<pair<int, double>, vector<string>> results;
     results.first.first = 0; // Initialize the number of nodes inspected
@@ -112,7 +112,7 @@ pair<pair<int, double>, vector<string>> Algorithms::dijkstraSearch(string from, 
     distances[fromId] = 0.0; // Distance to the start node is zero
     nodes.insert({0.0, fromId}); // Insert the start node with distance zero
 
-    while (!nodes.empty())
+    while (!nodes.empty()) // main loop
     {
         auto smallest = *nodes.begin(); // Get the node with the smallest distance
         nodes.erase(nodes.begin()); // Remove the node from the set
@@ -182,53 +182,48 @@ pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string fro
         inQueue[id_pair.second] = false;
     }
 
+    distances[fromId] = 0; // Set the distance to the starting node as 0
 
-	// Set the distance to the starting node as 0
-    distances[fromId] = 0;
-    //queue<int> q;
-    // q.push(fromId); // Start with the source node
-    deque<int> q;
-    q.push_back(fromId);
+    deque<int> q; // Shlok advised the use of a deque. referenced https://cplusplus.com/reference/deque/deque/
+    q.push_back(fromId); // Start with the source node
 
     inQueue[fromId] = true;
-
     bool distanceUpdated = false;
-    // main loop
-    for (int i = 0; i < getID.size() - 1; ++i) {
-    	distanceUpdated = false;
-      for (size_t qSize = q.size(); qSize >0; --qSize) {
-      	int u = q.front();
-        q.pop_front();
-        inQueue[u] = false;
 
-        results.first.first++;
+    for (int i = 0; i < getID.size() - 1; ++i) { // main loop
+		distanceUpdated = false;
 
-        if (u >= wikiDatabase.size()) continue;
+		for (size_t qSize = q.size(); qSize >0; --qSize) {
+			int u = q.front();
+			q.pop_front();
+			inQueue[u] = false;
 
-        for (const auto& edge : wikiDatabase[u]) {
-        	int v = edge.first;
-          double weight = 1;
+			results.first.first++;
 
-          // Check if a shorter path to node v has been found
-            if (distances[u] + weight < distances[v]) {
-                distances[v] = distances[u] + weight;
-                predecessors[v] = u;
+			if (u >= wikiDatabase.size()) continue;
 
-                // Only add to the queue if not already in it
-                if (!inQueue[v]) {
-                    q.push_back(v);
-                    inQueue[v] = true;
-                }
-                distanceUpdated = true;
-            }
+			for (const auto& edge : wikiDatabase[u]) {
+				int v = edge.first;
+				double weight = 1;
 
+				// Check if a shorter path to node v has been found
+				if (distances[u] + weight < distances[v]) {
+					distances[v] = distances[u] + weight;
+					predecessors[v] = u;
 
-        }
-      }
+					// Only add to the queue if not already in it
+					if (!inQueue[v]) {
+						q.push_back(v);
+						inQueue[v] = true;
+					}
+					distanceUpdated = true;
+				}
+			}
+		}
 
-      if (!distanceUpdated) {
-      	break;
-      }
+		if (!distanceUpdated) {
+      		break;
+		}
     }
 
     // Reconstruct path
@@ -244,7 +239,7 @@ pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string fro
     auto endTime = chrono::high_resolution_clock::now();// // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
     results.first.second = chrono::duration<double>((endTime - startTime)).count(); // saves time in seconds
 
-		return results;
+	return results; // Return the results
 }
 
 

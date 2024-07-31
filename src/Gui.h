@@ -1,5 +1,7 @@
-// referenced https://youtu.be/U1BnzWX194Q?si=tMxZHqrBkEy5TYx1 to set up ImGui
+// referenced https://youtu.be/U1BnzWX194Q?si=tMxZHqrBkEy5TYx1 to set up nearly all of ImGui (repo for the guide: https://github.com/codetechandtutorials/imGUIexample)
+// (vcpkg.json is entirely cited from this video)
 // as well as https://github.com/ocornut/imgui/blob/master/examples/example_glfw_opengl3/main.cpp (imgui example program)
+
 #pragma once
 
 #include <imgui.h>
@@ -19,13 +21,13 @@ public:
 	void init(GLFWwindow* window, const char* glsl_version);
 	void update(GLFWwindow* window, Algorithms& wikiDatabase);
 	void render();
-	void shutdown(GLFWwindow* window);
+	void shutdown();
 
 };
 
 // Class Function Definitions ---------------------
 
-void Gui::init(GLFWwindow* window, const char* glsl_version)
+void Gui::init(GLFWwindow* window, const char* glsl_version) // mostly retrieved from https://youtu.be/U1BnzWX194Q?si=tMxZHqrBkEy5TYx1
 {
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -59,14 +61,14 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
 
 	// Options window:
 
-	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-	ImGui::SetNextWindowSize(ImVec2(main_viewport->WorkPos.x, float(windowHeight)), ImGuiCond_Always);
+	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always); // locking options windows to the top left
+	ImGui::SetNextWindowSize(ImVec2(main_viewport->WorkPos.x, float(windowHeight)), ImGuiCond_Always); // locking options window width to a set value and height to scale as the page is resized
 
 	ImGui::Begin("Options:", NULL, window_flags);  // Create a window
 
 	ImGui::Text("Wiki Article Selection:"); // Display some text (you can use a format strings too)// Edit bools storing our window open/close state
 	ImGui::SameLine();
-	ImGui::TextDisabled("(?)");
+	ImGui::TextDisabled("(?)"); //setting up a tooltip retrieved/ referenced from https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp
 	if (ImGui::BeginItemTooltip())
 	{
 		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
@@ -74,15 +76,15 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
 		ImGui::PopTextWrapPos();
 		ImGui::EndTooltip();
 	}
-	static char bufFrom[200] = "";
+	static char bufFrom[200] = ""; // set buffer to 200 as all titles are < 200 characters
 	static char bufTo[200] = "";
-	ImGui::InputTextWithHint("Starting Wiki Article", "enter title here",     bufFrom, 200);
+	ImGui::InputTextWithHint("Starting Wiki Article", "enter title here",     bufFrom, 200); //setting up text input referenced from https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp
 	ImGui::InputTextWithHint("Target Wiki Article", "enter title here",     bufTo, 200);
 
 	ImGui::Text(" ");
 
 	ImGui::Text("Select Searching Algorithm:");
-	static int e = 0;
+	static int e = 0; //radio button setup retrieved/ referenced from https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp
 	ImGui::RadioButton("Breadth-first search", &e, 0);
 	ImGui::RadioButton("Dijkstra's Algorithm", &e, 1);
 	ImGui::RadioButton("Bellman-Ford Algorithm", &e, 2);
@@ -91,21 +93,21 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
 
 	static bool pressed = false, invalid = false;
 	static pair<pair<int, double>, vector<string>> results;
-	if(ImGui::Button("Find Shortest Connecting Path!"))
+	if(ImGui::Button("Find Shortest Connecting Path!")) //button setup referenced https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp
 	{
-		glfwWaitEvents();
-		pressed = true;
-		invalid = false;
-		std::string from(bufFrom, strlen(bufFrom));
+		pressed = true; // used later in displaying results
+		invalid = false; // used later in displaying results
+		std::string from(bufFrom, strlen(bufFrom)); // converts char array to string to be used in searches
 		std::string to(bufTo, strlen(bufTo));
 
+		// validates the from and to article titles
 		if (wikiDatabase.getID.find(from) == wikiDatabase.getID.end() || wikiDatabase.getID.find(to) == wikiDatabase.getID.end())
 		{
 			pressed = false;
 			invalid = true;
 		}
 
-		if(!invalid)
+		if(!invalid) // runs a search based on the position of the radio buttons
 		{
 			if(e == 0) results = wikiDatabase.breadthFirstSearch(from, to);
 			else if(e == 1) results = wikiDatabase.dijkstraSearch(from, to);
@@ -137,7 +139,7 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
 		ImGui::SameLine();
 		ImGui::Text("seconds");
 	}
-	if(invalid)
+	if(invalid) // displays a message if an article title is invalid
 	{
 		ImGui::Text(" ");
 		ImGui::Text("At least one of the given titles does not exist.");
@@ -149,32 +151,29 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
 
 	// Page Links window:
 
-	ImGui::SetNextWindowPos(ImVec2(optionsWindowSize.x, 0), ImGuiCond_Always);
-	ImGui::SetNextWindowSize(ImVec2(float(windowWidth) - optionsWindowSize.x, float(windowHeight)), ImGuiCond_Always);
+	ImGui::SetNextWindowPos(ImVec2(optionsWindowSize.x, 0), ImGuiCond_Always); // locking page links window to be directly to the right of options window
+	ImGui::SetNextWindowSize(ImVec2(float(windowWidth) - optionsWindowSize.x, float(windowHeight)), ImGuiCond_Always); // setting up page links window to scale in size as the page is resized
 
-	ImGui::Begin("Page Links:", NULL, window_flags);  // Create a window
+	ImGui::Begin("Page Links:", NULL, window_flags); // Create a window
 
-	ImGui::Text("Display page links here:");               // Display some text (you can use a format strings too)// Edit bools storing our window open/close state
+	ImGui::Text("Display page links here:");
 
 	ImGui::End();
 
 }
 
-void Gui::render()
+void Gui::render() // mostly retrieved from https://youtu.be/U1BnzWX194Q?si=tMxZHqrBkEy5TYx1
 {
-	// Rendering
-	// (Your code clears your framebuffer, renders your other stuff etc.)
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	// (Your code calls glfwSwapBuffers() etc.)
+	// glfwSwapBuffers() called in main
 }
 
-void Gui::shutdown(GLFWwindow* window)
+void Gui::shutdown() // mostly retrieved from https://youtu.be/U1BnzWX194Q?si=tMxZHqrBkEy5TYx1
 {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
-	glfwDestroyWindow(window);
-	glfwTerminate();
+	glfwTerminate(); // referenced https://www.glfw.org/docs/3.3/group__init.html#gaaae48c0a18607ea4a4ba951d939f0901
 }

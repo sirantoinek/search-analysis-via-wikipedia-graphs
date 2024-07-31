@@ -6,11 +6,11 @@ int main()
 	cout << "Deserializing binaries, please wait..." << endl;
 	Algorithms wikiDatabase; // is an algorithms object so that it can access functions from algs and wikidata
 	cout << "Done!" << endl;
-	//wikiDatabase.algTesting(); // runs bfs test code
+	//wikiDatabase.algTesting(); // runs algorithm testing code in terminal
 
-	// GUI STUFF ---------
+	// GUI STUFF -----------------------------
 
-	// window code retrieved from imgui example https://github.com/ocornut/imgui/blob/master/examples/example_glfw_opengl3/main.cpp AND https://github.com/codetechandtutorials/imGUIexample
+	// window code below retrieved from imgui example https://github.com/ocornut/imgui/blob/master/examples/example_glfw_opengl3/main.cpp AND https://github.com/codetechandtutorials/imGUIexample
 	glfwInit();
 	const char* glsl_version = "#version 130";
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -41,9 +41,7 @@ int main()
 		imGui.render();
 		glfwSwapBuffers(window);
 	}
-	imGui.shutdown(window);
-	glfwDestroyWindow(window);
-	glfwTerminate();
+	imGui.shutdown();
 
     return 0;
 }

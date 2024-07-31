@@ -26,26 +26,6 @@ struct WikiDatabase
 		deserializeVec();
 	}
 
-	void useful4Visualization(){ // purely non-functional function
-
-		for(int i = 0; i < 26; i++){ // these for loops are useful reference for how to access each part of the database
-			cout << "Page #" << i << " Connections: " << endl;
-			for(auto & j : wikiDatabase[i]){
-				cout << j.first << " ";
-			}
-			cout << endl;
-		}
-
-		/*
-
-		string wikiPage = "Simpson Mutambanengwe";
-		for(int i = 0; i < wikiDatabase[getID[wikiPage]].size(); i++){ // could be replaced with for(auto & i : wikiDatabase[getID[wikiPage]]){}
-			cout << wikiDatabase[getID[wikiPage]][i].first << " ";
-		} // shows all the connections that Simpson Mutambanengwe leads to
-
-		*/
-	}
-
 private:
 
 	void deserializeIDMap() {

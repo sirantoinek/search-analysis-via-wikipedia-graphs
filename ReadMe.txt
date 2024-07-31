@@ -11,10 +11,5 @@ Otherwise, the binaries will not be found as the relative path will be invalid.
 Also make sure that you are using the visual studio toolchain in your Cmake profile as when using MinGW, dependencies are not found.
 
 WARNING:
-Be aware that when running, the program may use up to 7 GB of memory.
+Be aware that when running, the program may use up to 8 GB of memory.
 This is because the dataset is MASSIVE at 163 million rows. (The source csv file was 8.9 GB)
-
-
-Citation: referenced https://youtu.be/U1BnzWX194Q?si=tMxZHqrBkEy5TYx1 when setting up ImGui
-(vcpkg.json is entirely cited from this video)
-(this should be moved at a later date I just wanted it to be somewhere for now)
