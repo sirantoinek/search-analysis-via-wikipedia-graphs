@@ -3,7 +3,6 @@
 #include <chrono>
 #include <set>
 #include <queue>
-#include <map>
 #include <ctime>
 #include <algorithm>
 
@@ -38,7 +37,7 @@ pair<pair<int, double>, vector<string>> Algorithms::breadthFirstSearch(string fr
 
 	chrono::high_resolution_clock::time_point startTime = chrono::high_resolution_clock::now(); // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
 
-	map<int, int> visited; // key is the inserted article and value is the article that it came from (useful for finding shortest path)
+	unordered_map<int, int> visited; // key is the inserted article and value is the article that it came from (useful for finding shortest path)
 	// predecessor idea inspired by dijkstra's algorithm (slide 3 M11_01_COP3530_F23_Kapoor.pptx)
 	queue<int> q;
 	visited[fromId] = fromId;
@@ -101,8 +100,8 @@ pair<pair<int, double>, vector<string>> Algorithms::dijkstraSearch(string from, 
     chrono::high_resolution_clock::time_point startTime = chrono::high_resolution_clock::now();// referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
 
 
-    map<int, int> previous; // To store the previous node for the shortest path
-    map<int, double> distances; // To store the shortest distance to each node
+    unordered_map<int, int> previous; // To store the previous node for the shortest path
+    unordered_map<int, double> distances; // To store the shortest distance to each node
     set<pair<double, int>> nodes; // Set of (distance, node) pairs for Dijkstra's algorithm
 
     // Initialize distances to infinity for all nodes
