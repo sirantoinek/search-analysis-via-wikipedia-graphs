@@ -1,6 +1,0 @@
-# ninja log v5
-7	542	7435719268912785	CMakeFiles/search_analysis_via_wikipedia_graphs.dir/src/imgui_combo_autoselect.cpp.obj	4d9c7616e9c70f8a
-5	529	7435719267331428	CMakeFiles/search_analysis_via_wikipedia_graphs.dir/src/WikiDatabase.cpp.obj	3e4c8b957cca4813
-3	510	7435897903797993	CMakeFiles/search_analysis_via_wikipedia_graphs.dir/src/main.cpp.obj	f7583b169a33e91f
-511	865	7435897904603716	search_analysis_via_wikipedia_graphs.exe	896383953c642971
-2	354	7435909443783330	search_analysis_via_wikipedia_graphs.exe	7966201c8c40989b
