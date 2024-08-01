@@ -19,7 +19,7 @@ public:
 	// the pair in first contains the number of nodes inspected as an int (first) and the runtime of the function as a double (second).
 
 	pair<pair<int, double>, vector<string>> breadthFirstSearch(string from, string to);
-	pair<pair<int, double>, vector<string>> dijkstraSearch(string from, string to); 
+	pair<pair<int, double>, vector<string>> dijkstraSearch(string from, string to);
 	pair<pair<int, double>, vector<string>> bellmanFordSearch(string from, string to);
 	void algTesting(); // function purely for testing in the terminal (and not in the gui)
 };
@@ -312,4 +312,3 @@ void Algorithms::algTesting()
         cout << results.second[results.second.size() - 1]; // prints final element with no arrow
     }
 }
-

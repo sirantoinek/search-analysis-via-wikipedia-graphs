@@ -11,11 +11,31 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include <string>
+#include <unordered_set>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+struct BoundingBox {
+    ImVec2 min;
+    ImVec2 max; // the max and min of a box represent the furthest points from the center of a node that will still result in a collision with another node
+
+    bool intersects(BoundingBox& other) {
+        return !(max.x < other.min.x || min.x > other.max.x || max.y < other.min.y || min.y > other.max.y);
+    }
+};
+
+// op overloading :)
+bool operator==(ImVec2& lhs, ImVec2& rhs) {
+    return lhs.x == rhs.x && lhs.y == rhs.y;
+}
 
 class Gui
 {
 private:
-	// add private helper functions here to be used in the public functions.
+    unsigned int randomSeed;
+    // add private helper functions here to be used in the public functions.
 
 public:
 	void init(GLFWwindow* window, const char* glsl_version);
@@ -35,10 +55,13 @@ void Gui::init(GLFWwindow* window, const char* glsl_version) // mostly retrieved
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
 
-	// Setup Platform/Renderer backends
-	ImGui_ImplGlfw_InitForOpenGL(window, true); // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
-	ImGui_ImplOpenGL3_Init(glsl_version);
-	ImGui::StyleColorsDark();
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true); // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+    ImGui_ImplOpenGL3_Init(glsl_version);
+    ImGui::StyleColorsDark();
+
+    randomSeed = 12345; // generate random seed here instead of in update so that we don't constantly find different random paths
+    srand(randomSeed);
 }
 
 void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
@@ -154,11 +177,124 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
 	ImGui::SetNextWindowPos(ImVec2(optionsWindowSize.x, 0), ImGuiCond_Always); // locking page links window to be directly to the right of options window
 	ImGui::SetNextWindowSize(ImVec2(float(windowWidth) - optionsWindowSize.x, float(windowHeight)), ImGuiCond_Always); // setting up page links window to scale in size as the page is resized
 
-	ImGui::Begin("Page Links:", NULL, window_flags); // Create a window
+    ImGui::Begin("Page Links:", NULL, window_flags);
 
-	ImGui::Text("Display page links here:");
+    const float baseOvalHeight = 50; // all ovals have base dimensions that will be increased if the strings they hold are too big
+    const float arrowLength = 30;
+    windowWidth = ImGui::GetWindowSize().x;
+    windowHeight = ImGui::GetWindowSize().y;
+    const float leftBoundary = 400.0f;
 
-	ImGui::End();
+    ImVec2 position(leftBoundary, windowHeight / 2.0f);
+    vector<BoundingBox> occupiedBounds; // stores a vector of bounds that are occupied so that nodes don't intersect with each other and must select a different path
+
+    srand(randomSeed); // this sets random seed to the same value every time update is called since init() was used
+
+    vector<ImVec2> directions = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} }; // node movement directions
+    int previousDirection = -1;
+
+    vector<ImVec2> ovalCenters; // vectors of ImVec2 are used to store the coordinates of each respective object
+    vector<ImVec2> arrowStartPoints;
+    vector<ImVec2> arrowEndPoints;
+    vector<string> texts;
+
+    ImGui::BeginGroup();
+    for (int i = 0; i < results.second.size(); i++) // iterates over all nodes
+    {
+        float ovalWidth = 100;
+        if (results.second[i].length() > 10)
+        {
+            ovalWidth += (results.second[i].length() - 10) * 10; // this is where the oval length is increased based on string size
+        }
+
+        ImVec2 ovalCenter = ImVec2(position.x + ovalWidth / 2, position.y + baseOvalHeight / 2);
+        ovalCenters.push_back(ovalCenter);
+        texts.push_back(results.second[i]);
+        BoundingBox currentBox = { {position.x, position.y}, {position.x + ovalWidth, position.y + baseOvalHeight} };
+        occupiedBounds.push_back(currentBox);
+
+        if (i < results.second.size() - 1)
+        {
+            ImVec2 succPos;
+            BoundingBox succBox;
+            int direction;
+            while (true) {
+                direction = rand() % 4;
+                float moveX = ovalWidth + arrowLength;
+                float moveY = baseOvalHeight + arrowLength;
+                succPos = ImVec2(position.x + directions[direction].x * moveX, position.y + directions[direction].y * moveY);
+
+                float nextOvalWidth = 100;
+                if (results.second[i + 1].length() > 10)
+                {
+                    nextOvalWidth += (results.second[i + 1].length() - 10) * 10;
+                }
+
+                succBox = { {succPos.x, succPos.y}, {succPos.x + nextOvalWidth, succPos.y + baseOvalHeight} };
+
+                bool intersectsAnyBox = any_of(occupiedBounds.begin(), occupiedBounds.end(), [&](BoundingBox& box) {
+                    return succBox.intersects(box);
+                });
+
+                bool isOppositeDirection = direction == (previousDirection + 2) % 4;
+
+                bool exceedsRightBoundary = succBox.max.x > windowWidth;
+                bool exceedsLeftBoundary = succBox.min.x < leftBoundary;
+                bool exceedsBottomBoundary = succBox.max.y > windowHeight;
+                bool exceedsTopBoundary = succBox.min.y < 0;
+
+                if (!intersectsAnyBox && !isOppositeDirection && !exceedsRightBoundary && !exceedsLeftBoundary && !exceedsBottomBoundary && !exceedsTopBoundary) {
+                    break; // this is the exit of the while loop. if there are no valid paths, for example if a node is surrounded by 4 other nodes then there will be no valid path and the program will run indefinitely
+                }
+            }
+
+            arrowStartPoints.push_back(ovalCenter);
+            float nextOvalWidth = 100; // base dimension
+            if (results.second[i + 1].length() > 10)
+            {
+                nextOvalWidth += (results.second[i + 1].length() - 10) * 10;
+            }
+            arrowEndPoints.push_back(ImVec2(succPos.x + nextOvalWidth / 2, succPos.y + baseOvalHeight / 2));
+
+            position = succPos;
+            occupiedBounds.push_back(succBox);
+            previousDirection = direction;
+        }
+    }
+
+    for (size_t i = 0; i < arrowStartPoints.size(); i++){ // arrow drawing
+        ImGui::GetWindowDrawList()->AddLine(arrowStartPoints[i], arrowEndPoints[i], IM_COL32(0, 100, 255, 255), 2.0f);
+    }
+
+    for (size_t i = 0; i < ovalCenters.size(); i++) // drawing the ovals
+    {
+        ImVec2 ovalCenter = ovalCenters[i];
+        float ovalWidth = 100;
+        if (texts[i].length() > 10)
+        {
+            ovalWidth += (texts[i].length() - 10) * 10; // increases the size of the ovals if the string is too big
+        }
+        float ovalRadiusX = ovalWidth / 2;
+        float ovalRadiusY = baseOvalHeight / 2;
+        const int num_segments = 50;
+        ImVector<ImVec2> ellipse_points;
+        for (int j = 0; j < num_segments; j++)
+        {
+            float theta = 2.0f * M_PI * float(j) / float(num_segments); // get angle
+            float x = ovalRadiusX * cosf(theta); // calculate x component
+            float y = ovalRadiusY * sinf(theta); // calculate y component
+            ellipse_points.push_back(ImVec2(ovalCenter.x + x, ovalCenter.y + y)); // output vertex
+        }
+        ImGui::GetWindowDrawList()->AddConvexPolyFilled(ellipse_points.Data, ellipse_points.Size, IM_COL32(0, 100, 255, 255));
+    }
+
+    for (size_t i = 0; i < ovalCenters.size(); i++){ // draws all text last so that it isn't drawn on top of
+        ImVec2 textPos = ImVec2(ovalCenters[i].x - ImGui::CalcTextSize(texts[i].c_str()).x / 2,
+                                ovalCenters[i].y - ImGui::CalcTextSize(texts[i].c_str()).y / 2);
+        ImGui::GetWindowDrawList()->AddText(textPos, IM_COL32(255, 255, 255, 255), texts[i].c_str());
+    }
+
+    ImGui::EndGroup();
 
 }
 
