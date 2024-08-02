@@ -194,7 +194,7 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
         return;
     }
 
-    if(!random){ // if random flag is not set then display nodes like a snake
+    if(!random){ // if random flag is not set, then display nodes in a snaking pattern
         float baseOvalHeight = 50, verticalArrowLength = 70, leftBoundary = 400.0f;
         float initialX = leftBoundary, initialY = 60.0f, arrowPadding = 40.0f;
 
