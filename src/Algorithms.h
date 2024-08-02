@@ -5,6 +5,7 @@
 #include <queue>
 #include <ctime>
 #include <algorithm>
+#include <map>
 
 #include "WikiDatabase.cpp"
 
@@ -22,13 +23,14 @@ public:
 	pair<pair<int, double>, vector<string>> dijkstraSearch(string from, string to);
 	pair<pair<int, double>, vector<string>> bellmanFordSearch(string from, string to);
 	void algTesting(); // function purely for testing in the terminal (and not in the gui)
+    void findLongest(int trials);
 };
 
 // Class Function Definitions ---------------------
 
 pair<pair<int, double>, vector<string>> Algorithms::breadthFirstSearch(string from, string to) // uses modified version of algorithm found in M10_08_COP3530_F23_Kapoor_accessible.pdf (Module 10 Graph Traversal slides) (page 4)
 {
-	pair<pair<int, double>, vector<string>> results;
+	pair<pair<int, double>, vector<string>> results; // returns <<number of pages searched, traversal time>, <vector containing all nodes traversed to get to the terminal node>>
 	results.first.first = 0;
 
 	int fromId = getID[from];
@@ -310,5 +312,86 @@ void Algorithms::algTesting()
             cout << results.second[i] << " -> ";
         }
         cout << results.second[results.second.size() - 1]; // prints final element with no arrow
+    }
+}
+
+void Algorithms::findLongest(int trials){ // this function is purely for fun to see the longest path length we can get searching through '# of trials' pairs
+
+    auto itr = getTitle.begin();
+    for(int i = 0; i < 3000; i++) itr++;
+
+    map<int, int> counts;
+
+    int longestTraversal = 0;
+    string toLongest;
+    string fromLongest;
+    double averageTraversalLength;
+    double averageSearchedPages;
+    vector<int> traversalLengths;
+    vector<double> traversalTimes;
+    vector<double> searchedPages;
+
+    for(int i = 1; i < trials; i++){
+        string from = itr->second;
+        itr++;
+        string to = itr->second;
+        cout << "\nSearch from '" << from << "' to '" << to << "' has started (#" << i << " of " << trials << ")." << endl;
+        pair<pair<int, double>, vector<string>> results = breadthFirstSearch(from, to);
+
+        cout << "Shortest Path Length: " << results.second.size() << ". Search Time: " << results.first.second << " seconds." << endl;
+
+        if(results.second.size() != 0) {
+            traversalLengths.push_back(results.second.size());
+            traversalTimes.push_back(results.first.second);
+            searchedPages.push_back(results.first.first);
+        }
+
+        counts[results.second.size()]++;
+
+        if(results.second.size() > longestTraversal) {
+            longestTraversal = results.second.size();
+            toLongest = to;
+            fromLongest = from;
+        }
+
+        if(results.second.size() == 0) {
+            cout << "Page Connection Not Found!";
+            itr++;
+        }
+
+        else{
+            for(int i = 0; i < results.second.size() - 1; i++) cout << results.second[i] << " -> ";
+            cout << results.second[results.second.size() - 1];
+        }
+
+        cout << endl;
+    }
+
+    double sum = 0.0;
+    for(double num : traversalLengths){
+        sum += num;
+    }
+    averageTraversalLength = sum / traversalLengths.size();
+
+    sum = 0.0;
+    for(double num : traversalTimes){
+        sum += num;
+    }
+
+    double averageTraversalTime = sum / traversalTimes.size();
+
+    sum = 0.0;
+    for(double num : searchedPages){
+        sum += num;
+    }
+
+    averageSearchedPages = sum / searchedPages.size();
+
+    cout << "\n\nYour longest traversal path was " << longestTraversal << " pages, from " << fromLongest << " to " << toLongest << endl;
+    cout << "The average traversal length was " << averageTraversalLength << ", and the average traversal time was " << averageTraversalTime << " (given that the pages were found)." << endl;
+    cout << "Average number of pages searched: " << averageSearchedPages << endl;
+    cout << "Traversal length frequencies: \n";
+    for(auto pair : counts){
+        cout << "Traversal Length " << pair.first << " Frequency: " << pair.second << endl;
     }
 }

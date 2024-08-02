@@ -5,7 +5,8 @@ int main()
 {
 	cout << "Deserializing binaries, please wait..." << endl;
 	Algorithms wikiDatabase; // is an algorithms object so that it can access functions from algs and wikidata
-	cout << "Done!" << endl;
+	cout << "Done!" << endl << endl;
+    // wikiDatabase.findLongest(50);
 	//wikiDatabase.algTesting(); // runs algorithm testing code in terminal
 
 	// GUI STUFF -----------------------------
