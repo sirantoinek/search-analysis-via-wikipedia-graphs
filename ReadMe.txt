@@ -1,5 +1,8 @@
 READ ME:
 
+Welcome to Search Analysis via Wikipedia Graphs!
+This program allows the user to search for the shortest path between two wikipedia articles using BFS, Dijkstra's, or Bellman-Ford in a simple GUI.
+
 DOWNLOAD binaries.zip FROM HERE: 
 https://drive.google.com/file/d/1HBnSRNCwfCoaA9rP8cGIjFhIeS1TEznV/view?usp=sharing
 

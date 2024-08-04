@@ -19,8 +19,7 @@ int main()
 
 	// Create window with graphics context
 	GLFWwindow* window = glfwCreateWindow(1280, 720, "Search Analysis Via Wikipedia Graphs", nullptr, nullptr);
-	if (window == nullptr)
-		return 1;
+	if (window == nullptr) return 1;
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1); // Enable vsync
 
@@ -32,7 +31,7 @@ int main()
 
 	Gui imGui;
 	imGui.init(window, glsl_version);
-	while(!glfwWindowShouldClose(window))
+	while(!glfwWindowShouldClose(window)) // main loop
 	{
 		glfwPollEvents();
 		glClearColor(0.45f, 0.55f, 0.60f, 1.00f);

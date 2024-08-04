@@ -15,9 +15,10 @@ struct WikiDatabase
 	string IDMapFile = "bin/getIDmap.bin";
 	string vecFile = "bin/wikiDatabase.bin";
 
-	unordered_map<string, int> getID;
-	unordered_map<int, string> getTitle;
-	vector<vector<pair<int, int>>> wikiDatabase; // vector of connections vectors that hold connections (first), and weights (second).
+	unordered_map<string, int> getID; // Useful for converting a title to it's associated ID
+	unordered_map<int, string> getTitle; // Useful for converting an ID to it's associated title
+	vector<vector<pair<int, int>>> wikiDatabase; // Vector of connection vectors.
+	// Connection vectors hold connections with the connecting article id as .first, and the weight of the connection as .second
 
 	WikiDatabase()
 	{
@@ -28,9 +29,11 @@ struct WikiDatabase
 
 private:
 
-	void deserializeIDMap() {
+	void deserializeIDMap() // converts getStringMap.bin into usable data
+	{
 		ifstream file(stringMapFile, ios::binary);
-		if (!file.is_open()) {
+		if (!file.is_open())
+		{
 			cerr << "ID map file not opened successfully.";
 			return;
 		}
@@ -42,7 +45,8 @@ private:
 		string key;
 		int value;
 
-		while (size-- > 0) {
+		while (size-- > 0)
+		{
 			file.read(reinterpret_cast<char*>(&length), sizeof(length));
 			key.resize(length);
 
@@ -53,9 +57,11 @@ private:
 		file.close();
 	}
 
-	void deserializeStringMap() {
+	void deserializeStringMap() // converts getIDmap.bin into usable data
+	{
 		ifstream file(IDMapFile, ios::binary);
-		if (!file.is_open()) {
+		if (!file.is_open())
+		{
 			cerr << "String map file not opened successfully.";
 			return;
 		}
@@ -63,7 +69,8 @@ private:
 		size_t size;
 		file.read(reinterpret_cast<char*>(&size), sizeof(size));
 
-		while (size-- > 0) {
+		while (size-- > 0)
+		{
 			size_t length;
 			file.read(reinterpret_cast<char*>(&length), sizeof(length));
 			string key(length, '\0');
@@ -76,9 +83,11 @@ private:
 		file.close();
 	}
 
-	void deserializeVec() {
+	void deserializeVec() // converts wikiDatabase.bin into usable data
+	{
 		ifstream file(vecFile, ios::binary);
-		if (!file.is_open()) {
+		if (!file.is_open())
+		{
 			cerr << "Database file not opened successfully.";
 			return;
 		}
@@ -88,14 +97,16 @@ private:
 		int first;
 		int second;
 
-		file.read(reinterpret_cast<char*>(&outer_size), sizeof(outer_size)); // method inspired by .tga file reading
-		wikiDatabase.resize(outer_size); // outer_size and inner_size had to be written during serialization to make this possible, everything else is self-explanatory
+		file.read(reinterpret_cast<char*>(&outer_size), sizeof(outer_size)); // method inspired by .tga file reading from COP3503C Project 2 ImageProcessing
+		wikiDatabase.resize(outer_size); // outer_size and inner_size had to be written during serialization to make this possible
 
-		for (auto& innerVec : wikiDatabase) {
+		for (auto& innerVec : wikiDatabase)
+		{
 			file.read(reinterpret_cast<char*>(&inner_size), sizeof(inner_size));
 			innerVec.resize(inner_size);
 
-			for (auto& pair : innerVec) {
+			for (auto& pair : innerVec)
+			{
 				file.read(reinterpret_cast<char*>(&first), sizeof(first));
 				file.read(reinterpret_cast<char*>(&second), sizeof(second));
 				pair = {first, second};

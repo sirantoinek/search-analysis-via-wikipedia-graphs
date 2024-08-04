@@ -1,5 +1,5 @@
 // referenced https://youtu.be/U1BnzWX194Q?si=tMxZHqrBkEy5TYx1 to set up nearly all of ImGui (repo for the guide: https://github.com/codetechandtutorials/imGUIexample)
-// (vcpkg.json is entirely cited from this video)
+// (vcpkg.json is retrieved from this video)
 // as well as https://github.com/ocornut/imgui/blob/master/examples/example_glfw_opengl3/main.cpp (imgui example program)
 
 #pragma once
@@ -13,21 +13,24 @@
 #include <string>
 #include <unordered_set>
 
-#ifndef M_PI
+#ifndef M_PI // referenced https://cplusplus.com/doc/tutorial/preprocessor/
 #define M_PI 3.14159265358979323846
 #endif
 
-struct BoundingBox {
+struct BoundingBox // object used to keep track of node position
+{
     ImVec2 min;
     ImVec2 max; // the max and min of a box represent the furthest points from the center of a node that will still result in a collision with another node
 
-    bool intersects(BoundingBox& other) {
+    bool intersects(BoundingBox& other) const // returns true if an intersection is found and false if not
+	{
         return !(max.x < other.min.x || min.x > other.max.x || max.y < other.min.y || min.y > other.max.y);
     }
 };
 
-// op overloading referenced from https://cplusplus.com/doc/tutorial/templates/
-bool operator==(ImVec2& lhs, ImVec2& rhs) {
+// referenced https://cplusplus.com/doc/tutorial/templates/ for operator overloading
+bool operator==(ImVec2& lhs, ImVec2& rhs)
+{
     return lhs.x == rhs.x && lhs.y == rhs.y;
 }
 
@@ -35,7 +38,6 @@ class Gui
 {
 private:
     unsigned int randomSeed;
-    // add private helper functions here to be used in the public functions.
 
 public:
 	void init(GLFWwindow* window, const char* glsl_version);
@@ -60,7 +62,7 @@ void Gui::init(GLFWwindow* window, const char* glsl_version) // mostly retrieved
     ImGui_ImplOpenGL3_Init(glsl_version);
     ImGui::StyleColorsDark();
 
-    randomSeed = 1234; // generate random seed here instead of in update so that we don't constantly find different random paths
+    randomSeed = 1234; // using a set random seed so that we don't constantly find different random paths
     srand(randomSeed);
 }
 
@@ -99,6 +101,7 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
 		ImGui::PopTextWrapPos();
 		ImGui::EndTooltip();
 	}
+
 	static char bufFrom[200] = ""; // set buffer to 200 as all titles are < 200 characters
 	static char bufTo[200] = "";
 	ImGui::InputTextWithHint("Starting Wiki Article", "enter title here",     bufFrom, 200); //setting up text input referenced from https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp
@@ -116,6 +119,7 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
 
 	static bool pressed = false, invalid = false;
 	static pair<pair<int, double>, vector<string>> results;
+	// results.first.first holds number of nodes inspected, results.first.second holds runtime, and results.second holds the path between the "from" and "to" articles
 	if(ImGui::Button("Find Shortest Connecting Path!")) //button setup referenced https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp
 	{
 		pressed = true; // used later in displaying results
@@ -142,7 +146,7 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
 
 	ImGui::Text("Results:");
 	ImGui::Text("Shortest Path Length:");
-	if(pressed & !invalid)
+	if(pressed & !invalid) // only print data to screen if the button was pressed and the search was between two valid pages
 	{
 		ImGui::SameLine();
 		if(results.second.empty()) ImGui::Text("No connection found");
@@ -174,9 +178,9 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
     ImGui::SetCursorPos(ImVec2(10, windowSize.y - 50));
     ImGui::Text("Node Layout (experimental)");
     ImGui::SetCursorPos(ImVec2(10, windowSize.y - 30));
-    if (ImGui::Button("Randomize Layout if Available")) {
-        random = !random;
-    }
+	// toggles random article path layout (if a random layout is possible with the current page size
+	// Note: This feature is EXPERIMENTAL, in progress, and beyond the scope of the proposal
+    if (ImGui::Button("Randomize Layout if Available")) random = !random;
 
 	ImVec2 optionsWindowSize = ImGui::GetWindowSize(); // referenced imgui demo code https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp
 	ImGui::End();
@@ -188,18 +192,21 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
 
     ImGui::Begin("Page Links:", NULL, window_flags);  // Create a window
 
-    if (invalid) {
+    if (invalid) // displays a message if an article title is invalid
+	{
         ImGui::Text("Invalid title(s) entered");
         ImGui::End();
         return;
     }
 
-    if(!random){ // if random flag is not set, then display nodes in a snaking pattern
-        float baseOvalHeight = 50, verticalArrowLength = 70, leftBoundary = 400.0f;
+    if(!random) // if random is false, display page links normally in a 'snaking' pattern
+	{
+        float baseOvalHeight = 50, verticalArrowLength = 70, leftBoundary = 400.0f; // all ovals have base dimensions that will be increased if the strings they hold are too big
         float initialX = leftBoundary, initialY = 60.0f, arrowPadding = 40.0f;
 
         float firstOvalWidth = 100;
-        if (results.second.size() > 0 && results.second[0].length() > 10) {
+        if (results.second.size() > 0 && results.second[0].length() > 10) // adjusts oval width to fit the title
+		{
             firstOvalWidth += (results.second[0].length() - 10) * 10;
         }
         initialX += firstOvalWidth / 2;
@@ -216,30 +223,38 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
         vector<string> texts = results.second;
 
         ImGui::BeginGroup();
-        for (int i = 0; i < results.second.size(); ++i){ // iterates through all nodes
+        for (int i = 0; i < results.second.size(); ++i) // iterates through all nodes
+		{
             float ovalWidth = 100;
-            if (results.second[i].length() > 10){
+            if (results.second[i].length() > 10)
+			{
                 ovalWidth += (results.second[i].length() - 10) * 10;
             }
 
             float nextOvalWidth = 100;
-            if (i + 1 < results.second.size() && results.second[i + 1].length() > 10){
+            if (i + 1 < results.second.size() && results.second[i + 1].length() > 10)
+			{
                 nextOvalWidth += (results.second[i + 1].length() - 10) * 10;
             }
 
             ImVec2 nextPosition = position;
-            if (directions[currentDirection].x != 0) { // calculates our next position based off current direction and next oval width
+            if (directions[currentDirection].x != 0) // calculates our next position based off current direction and next oval width
+			{
                 nextPosition.x += directions[currentDirection].x * (ovalWidth / 2 + nextOvalWidth / 2 + arrowPadding);
             }
-            else {
+            else
+			{
                 nextPosition.y += directions[currentDirection].y * (baseOvalHeight + verticalArrowLength);
             }
 
-            if ((currentDirection == 0 && nextPosition.x + nextOvalWidth / 2 > windowWidth) || (currentDirection == 2 && nextPosition.x - nextOvalWidth / 2 < leftBoundary)){
-                if (currentDirection == 0) { // r - d
+            if ((currentDirection == 0 && nextPosition.x + nextOvalWidth / 2 > windowWidth) || (currentDirection == 2 && nextPosition.x - nextOvalWidth / 2 < leftBoundary))
+			{
+                if (currentDirection == 0) // right -> down
+				{
                     nextPosition.x = windowWidth - nextOvalWidth / 2 - 20;
                 }
-                else if (currentDirection == 2) { // l - d
+                else if (currentDirection == 2) // left -> down
+				{
                     nextPosition.x = leftBoundary + nextOvalWidth / 2;
                 }
 
@@ -250,31 +265,35 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
             ovalCenters.push_back(position);
             position = nextPosition;
 
-            if (directions[currentDirection].x == 0) {
+            if (directions[currentDirection].x == 0) // cycles through directions if current direction is not left or right
+			{
                 currentDirection = (currentDirection + 1) % 4;
             }
 
-            if (i > 0){
+            if (i > 0)
+			{
                 arrowStartPoints.push_back(ovalCenters[i - 1]);
                 arrowEndPoints.push_back(ovalCenters[i]);
             }
         }
 
-        for (size_t i = 0; i < arrowStartPoints.size(); i++){ // arrow drawing
+        for (size_t i = 0; i < arrowStartPoints.size(); i++) // arrow drawing
+		{
             ImGui::GetWindowDrawList()->AddLine(arrowStartPoints[i], arrowEndPoints[i], IM_COL32(0, 100, 255, 255), 2.0f);
         }
 
-        for (size_t i = 0; i < ovalCenters.size(); i++){ // drawing the ovals
+        for (size_t i = 0; i < ovalCenters.size(); i++) // drawing the ovals
+		{
             ImVec2 ovalCenter = ovalCenters[i];
             float ovalWidth = 100;
-            if (texts[i].length() > 10){
-                ovalWidth += (texts[i].length() - 10) * 10; // increases the size of the ovals if the string is too big
-            }
+            if (texts[i].length() > 10) ovalWidth += (texts[i].length() - 10) * 10; // increases the size of the ovals if the string is too big
+
             float ovalRadiusX = ovalWidth / 2;
             float ovalRadiusY = baseOvalHeight / 2;
             const int num_segments = 50;
             ImVector<ImVec2> ellipse_points;
-            for (int j = 0; j < num_segments; j++){
+            for (int j = 0; j < num_segments; j++)
+			{
                 float theta = 2.0f * M_PI * float(j) / float(num_segments); // get angle
                 float x = ovalRadiusX * cosf(theta); // calculate x component
                 float y = ovalRadiusY * sinf(theta); // calculate y component
@@ -283,14 +302,15 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
             ImGui::GetWindowDrawList()->AddConvexPolyFilled(ellipse_points.Data, ellipse_points.Size, IM_COL32(0, 100, 255, 255));
         }
 
-        for (size_t i = 0; i < ovalCenters.size(); i++){ // draws all text last so that it isn't drawn on top of
-            ImVec2 textPos = ImVec2(ovalCenters[i].x - ImGui::CalcTextSize(texts[i].c_str()).x / 2,
-                                    ovalCenters[i].y - ImGui::CalcTextSize(texts[i].c_str()).y / 2);
+        for (size_t i = 0; i < ovalCenters.size(); i++) // draws the text last so that it appears on top
+		{
+            ImVec2 textPos = ImVec2(ovalCenters[i].x - ImGui::CalcTextSize(texts[i].c_str()).x / 2, ovalCenters[i].y - ImGui::CalcTextSize(texts[i].c_str()).y / 2);
             ImGui::GetWindowDrawList()->AddText(textPos, IM_COL32(255, 255, 255, 255), texts[i].c_str());
         }
     }
 
-    else{ // if random is true then display the nodes in a random fashion
+    else // if random is true, display page links in a random fashion (Experimental, in testing, and beyond the scope of the proposal)
+	{
         const float baseOvalHeight = 50; // all ovals have base dimensions that will be increased if the strings they hold are too big
         const float arrowLength = 30;
         windowWidth = ImGui::GetWindowSize().x;
@@ -311,12 +331,10 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
         vector<string> texts;
 
         ImGui::BeginGroup();
-        for (int i = 0; i < results.second.size(); i++){ // iterates over all nodes
-
+        for (int i = 0; i < results.second.size(); i++) // iterates over all nodes
+		{
             float ovalWidth = 100;
-            if (results.second[i].length() > 10){
-                ovalWidth += (results.second[i].length() - 10) * 10; // this is where the oval length is increased based on string size
-            }
+            if (results.second[i].length() > 10) ovalWidth += (results.second[i].length() - 10) * 10; // this is where the oval length is increased based on string size
 
             ImVec2 ovalCenter = ImVec2(position.x + ovalWidth / 2, position.y + baseOvalHeight / 2);
             ovalCenters.push_back(ovalCenter);
@@ -324,25 +342,26 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
             BoundingBox currentBox = { {position.x, position.y}, {position.x + ovalWidth, position.y + baseOvalHeight} };
             occupiedBounds.push_back(currentBox);
 
-            if (i < results.second.size() - 1){
-                ImVec2 succPos;
+            if (i < results.second.size() - 1)
+			{
+                ImVec2 succPos; // successor position
                 BoundingBox succBox;
                 int direction;
                 int count = 0;
-                while (true) { // this while loop continues to iterate until a valid path is found for the following node OR count reaches 100 indicating that no valid path is possible
+                while (true) // this while loop continues to iterate until a valid path is found for the following node OR count reaches 100 indicating that no valid path is possible
+				{
                     direction = rand() % 4;
                     float moveX = ovalWidth + arrowLength;
                     float moveY = baseOvalHeight + arrowLength;
                     succPos = ImVec2(position.x + directions[direction].x * moveX, position.y + directions[direction].y * moveY);
 
                     float nextOvalWidth = 100;
-                    if (results.second[i + 1].length() > 10){
-                        nextOvalWidth += (results.second[i + 1].length() - 10) * 10;
-                    }
+                    if (results.second[i + 1].length() > 10) nextOvalWidth += (results.second[i + 1].length() - 10) * 10;
 
                     succBox = { {succPos.x, succPos.y}, {succPos.x + nextOvalWidth, succPos.y + baseOvalHeight} }; // changes the bounding box parameters of succBox after finding new path
 
-                    bool intersectsAnyBox = any_of(occupiedBounds.begin(), occupiedBounds.end(), [&](BoundingBox& box) {
+                    bool intersectsAnyBox = any_of(occupiedBounds.begin(), occupiedBounds.end(), [&](BoundingBox& box)
+					{
                         return succBox.intersects(box);
                     });
 
@@ -354,13 +373,15 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
                     bool exceedsTopBoundary = succBox.min.y < 0;
                     count++;
 
-                    if(count > 100){ // count increments for every iteration of the while loop
+                    if(count > 100) // count increments for every iteration of the while loop
+					{
                         count = 0;
                         random = false;
                         break;
                     }
 
-                    if (!intersectsAnyBox && !isOppositeDirection && !exceedsRightBoundary && !exceedsLeftBoundary && !exceedsBottomBoundary && !exceedsTopBoundary) {
+                    if (!intersectsAnyBox && !isOppositeDirection && !exceedsRightBoundary && !exceedsLeftBoundary && !exceedsBottomBoundary && !exceedsTopBoundary)
+					{
                         count = 0;
                         break; // this is the exit of the while loop. if there are no valid paths, for example if a node is surrounded by 4 other nodes then there will be no valid path and the program will run indefinitely
                     }
@@ -377,11 +398,13 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
             }
         }
 
-        for (size_t i = 0; i < arrowStartPoints.size(); i++){ // arrow drawing
+        for (size_t i = 0; i < arrowStartPoints.size(); i++) // arrow drawing
+		{
             ImGui::GetWindowDrawList()->AddLine(arrowStartPoints[i], arrowEndPoints[i], IM_COL32(0, 100, 255, 255), 2.0f);
         }
 
-        for (size_t i = 0; i < ovalCenters.size(); i++){ // drawing the ovals
+        for (size_t i = 0; i < ovalCenters.size(); i++) // drawing the ovals
+		{
             ImVec2 ovalCenter = ovalCenters[i];
             float ovalWidth = 100;
             if (texts[i].length() > 10) ovalWidth += (texts[i].length() - 10) * 10; // increases the size of the ovals if the string is too big
@@ -390,7 +413,8 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
             float ovalRadiusY = baseOvalHeight / 2;
             const int num_segments = 50;
             ImVector<ImVec2> ellipse_points;
-            for (int j = 0; j < num_segments; j++){
+            for (int j = 0; j < num_segments; j++)
+			{
                 float theta = 2.0f * M_PI * float(j) / float(num_segments); // get angle
                 float x = ovalRadiusX * cosf(theta); // calculate x component
                 float y = ovalRadiusY * sinf(theta); // calculate y component
@@ -399,15 +423,15 @@ void Gui::update(GLFWwindow* window, Algorithms& wikiDatabase)
             ImGui::GetWindowDrawList()->AddConvexPolyFilled(ellipse_points.Data, ellipse_points.Size, IM_COL32(0, 100, 255, 255));
         }
 
-        for (size_t i = 0; i < ovalCenters.size(); i++){ // draws all text last so that it isn't drawn on top of
-            ImVec2 textPos = ImVec2(ovalCenters[i].x - ImGui::CalcTextSize(texts[i].c_str()).x / 2,
-                                    ovalCenters[i].y - ImGui::CalcTextSize(texts[i].c_str()).y / 2);
+        for (size_t i = 0; i < ovalCenters.size(); i++) // draws all text last so that it isn't drawn on top of
+		{
+            ImVec2 textPos = ImVec2(ovalCenters[i].x - ImGui::CalcTextSize(texts[i].c_str()).x / 2, ovalCenters[i].y - ImGui::CalcTextSize(texts[i].c_str()).y / 2);
             ImGui::GetWindowDrawList()->AddText(textPos, IM_COL32(255, 255, 255, 255), texts[i].c_str());
         }
     }
 
     ImGui::EndGroup();
-
+	ImGui::End();
 }
 
 void Gui::render() // mostly retrieved from https://youtu.be/U1BnzWX194Q?si=tMxZHqrBkEy5TYx1

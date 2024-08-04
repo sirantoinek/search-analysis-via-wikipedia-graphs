@@ -99,7 +99,7 @@ pair<pair<int, double>, vector<string>> Algorithms::dijkstraSearch(string from, 
     int fromId = getID[from]; // Get the ID of the starting node
     int toId = getID[to]; // Get the ID of the destination node
 
-    chrono::high_resolution_clock::time_point startTime = chrono::high_resolution_clock::now();// referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
+    chrono::high_resolution_clock::time_point startTime = chrono::high_resolution_clock::now(); // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
 
 
     unordered_map<int, int> previous; // To store the previous node for the shortest path
@@ -162,7 +162,8 @@ pair<pair<int, double>, vector<string>> Algorithms::dijkstraSearch(string from, 
     return results; // Return the results
 }
 
-pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string from, string to) {
+pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string from, string to)
+{
     pair<pair<int, double>, vector<string>> results;
     results.first.first = 0; // Number of nodes inspected
 
@@ -178,7 +179,8 @@ pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string fro
     unordered_map<int, bool> inQueue; // Whether a node is currently in the queue
 
 	// Initialize all nodes' distances to infinity, predecessors to -1, and inQueue to false
-    for (const auto& id_pair : getID) {
+    for (const auto& id_pair : getID)
+	{
         distances[id_pair.second] = numeric_limits<double>::infinity();
         predecessors[id_pair.second] = -1;
         inQueue[id_pair.second] = false;
@@ -192,10 +194,12 @@ pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string fro
     inQueue[fromId] = true;
     bool distanceUpdated = false;
 
-    for (int i = 0; i < getID.size() - 1; ++i) { // main loop
+    for (int i = 0; i < getID.size() - 1; ++i) // main loop
+	{
 		distanceUpdated = false;
 
-		for (size_t qSize = q.size(); qSize >0; --qSize) {
+		for (size_t qSize = q.size(); qSize >0; --qSize)
+		{
 			int u = q.front();
 			q.pop_front();
 			inQueue[u] = false;
@@ -204,17 +208,20 @@ pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string fro
 
 			if (u >= wikiDatabase.size()) continue;
 
-			for (const auto& edge : wikiDatabase[u]) {
+			for (const auto& edge : wikiDatabase[u])
+			{
 				int v = edge.first;
 				double weight = 1;
 
 				// Check if a shorter path to node v has been found
-				if (distances[u] + weight < distances[v]) {
+				if (distances[u] + weight < distances[v])
+				{
 					distances[v] = distances[u] + weight;
 					predecessors[v] = u;
 
 					// Only add to the queue if not already in it
-					if (!inQueue[v]) {
+					if (!inQueue[v])
+					{
 						q.push_back(v);
 						inQueue[v] = true;
 					}
@@ -222,23 +229,22 @@ pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string fro
 				}
 			}
 		}
-
-		if (!distanceUpdated) {
-      		break;
-		}
+		if (!distanceUpdated) break;
     }
 
     // Reconstruct path
-    if (distances[toId] != numeric_limits<double>::infinity()) {
-        for (int at = toId; at != fromId; at = predecessors[at]) {
+    if (distances[toId] != numeric_limits<double>::infinity())
+	{
+        for (int at = toId; at != fromId; at = predecessors[at])
+		{
             results.second.push_back(getTitle[at]);
         }
         results.second.push_back(getTitle[fromId]);
-        reverse(results.second.begin(), results.second.end());//// referenced https://cplusplus.com/reference/algorithm/reverse/
+        reverse(results.second.begin(), results.second.end()); // referenced https://cplusplus.com/reference/algorithm/reverse/
     }
 
     // End timing
-    auto endTime = chrono::high_resolution_clock::now();// // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
+    auto endTime = chrono::high_resolution_clock::now(); // referenced https://cplusplus.com/reference/chrono/high_resolution_clock/now/
     results.first.second = chrono::duration<double>((endTime - startTime)).count(); // saves time in seconds
 
 	return results; // Return the results
@@ -315,8 +321,8 @@ void Algorithms::algTesting()
     }
 }
 
-void Algorithms::findLongest(int trials){ // this function is purely for fun to see the longest path length we can get searching through '# of trials' pairs
-
+void Algorithms::findLongest(int trials) // this function is purely for fun to see the longest path length we can get searching through '# of trials' pairs
+{
     auto itr = getTitle.begin();
     for(int i = 0; i < 3000; i++) itr++;
 
@@ -331,7 +337,8 @@ void Algorithms::findLongest(int trials){ // this function is purely for fun to 
     vector<double> traversalTimes;
     vector<double> searchedPages;
 
-    for(int i = 1; i < trials; i++){
+    for(int i = 1; i < trials; i++)
+	{
         string from = itr->second;
         itr++;
         string to = itr->second;
@@ -340,7 +347,8 @@ void Algorithms::findLongest(int trials){ // this function is purely for fun to 
 
         cout << "Shortest Path Length: " << results.second.size() << ". Search Time: " << results.first.second << " seconds." << endl;
 
-        if(results.second.size() != 0) {
+        if(results.second.size() != 0)
+		{
             traversalLengths.push_back(results.second.size());
             traversalTimes.push_back(results.first.second);
             searchedPages.push_back(results.first.first);
@@ -348,40 +356,45 @@ void Algorithms::findLongest(int trials){ // this function is purely for fun to 
 
         counts[results.second.size()]++;
 
-        if(results.second.size() > longestTraversal) {
+        if(results.second.size() > longestTraversal)
+		{
             longestTraversal = results.second.size();
             toLongest = to;
             fromLongest = from;
         }
 
-        if(results.second.size() == 0) {
+        if(results.second.size() == 0)
+		{
             cout << "Page Connection Not Found!";
             itr++;
         }
 
-        else{
+        else
+		{
             for(int i = 0; i < results.second.size() - 1; i++) cout << results.second[i] << " -> ";
             cout << results.second[results.second.size() - 1];
         }
-
         cout << endl;
     }
 
     double sum = 0.0;
-    for(double num : traversalLengths){
+    for(double num : traversalLengths)
+	{
         sum += num;
     }
     averageTraversalLength = sum / traversalLengths.size();
 
     sum = 0.0;
-    for(double num : traversalTimes){
+    for(double num : traversalTimes)
+	{
         sum += num;
     }
 
     double averageTraversalTime = sum / traversalTimes.size();
 
     sum = 0.0;
-    for(double num : searchedPages){
+    for(double num : searchedPages)
+	{
         sum += num;
     }
 
@@ -391,7 +404,8 @@ void Algorithms::findLongest(int trials){ // this function is purely for fun to 
     cout << "The average traversal length was " << averageTraversalLength << ", and the average traversal time was " << averageTraversalTime << " (given that the pages were found)." << endl;
     cout << "Average number of pages searched: " << averageSearchedPages << endl;
     cout << "Traversal length frequencies: \n";
-    for(auto pair : counts){
+    for(auto pair : counts)
+	{
         cout << "Traversal Length " << pair.first << " Frequency: " << pair.second << endl;
     }
 }
