@@ -131,7 +131,7 @@ pair<pair<int, double>, vector<string>> Algorithms::dijkstraSearch(string from, 
         for (const auto &neighbor : wikiDatabase[currentPage])
         {
             int neighborId = neighbor.first; // Neighbor node ID
-            double weight = 1.0; // Weight of the edge
+            double weight = neighbor.second; // Weight of the edge
             double alt = distances[currentPage] + weight; // Calculate alternative path distance
             if (alt < distances[neighborId]) // If a shorter path is found
             {
@@ -200,24 +200,24 @@ pair<pair<int, double>, vector<string>> Algorithms::bellmanFordSearch(string fro
 
 		for (size_t qSize = q.size(); qSize >0; --qSize)
 		{
-			int u = q.front();
+			int current = q.front();
 			q.pop_front();
-			inQueue[u] = false;
+			inQueue[current] = false;
 
 			results.first.first++;
 
-			if (u >= wikiDatabase.size()) continue;
+			if (current >= wikiDatabase.size()) continue;
 
-			for (const auto& edge : wikiDatabase[u])
+			for (const auto& edge : wikiDatabase[current])
 			{
 				int v = edge.first;
-				double weight = 1;
+				double weight = edge.second;
 
 				// Check if a shorter path to node v has been found
-				if (distances[u] + weight < distances[v])
+				if (distances[current] + weight < distances[v])
 				{
-					distances[v] = distances[u] + weight;
-					predecessors[v] = u;
+					distances[v] = distances[current] + weight;
+					predecessors[v] = current;
 
 					// Only add to the queue if not already in it
 					if (!inQueue[v])
