@@ -44,3 +44,5 @@ This project uses a **very large dataset** consisting of **163 million rows** (o
 * Easy-to-use graphical interface.
 * Real-time pathfinding across a large-scale Wikipedia graph.
 * Includes full support for article title validation.
+
+---
