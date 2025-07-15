@@ -1,19 +1,46 @@
-READ ME:
+# **Search Analysis via Wikipedia Graphs**
 
-Welcome to Search Analysis via Wikipedia Graphs!
-This program allows the user to search for the shortest path between two wikipedia articles using BFS, Dijkstra's, or Bellman-Ford in a simple GUI.
+This application provides an interactive way to explore the shortest paths between two Wikipedia articles using classic graph search algorithms: **Breadth-First Search (BFS)**, **Dijkstra's Algorithm**, and **Bellman-Ford**. The program features a simple and intuitive **GUI** for selecting source and target articles and visualizing their connections.
 
-DOWNLOAD binaries.zip FROM HERE: 
-https://drive.google.com/file/d/1HBnSRNCwfCoaA9rP8cGIjFhIeS1TEznV/view?usp=sharing
+---
 
-The .bin files in binaries.zip must be extracted into the bin folder for the program to function. This limitation is due to the LFS 1gb storage limit on github.
-binaries.zip also contains a .txt file containing every valid article title.
+## 🔧 **Setup Instructions**
 
-When compiling the Cmake application, set the "Working directory" in your IDE to the project root folder (should be "Search-Analysis-via-Wikipedia-Graphs").
-Otherwise, the binaries will not be found as the relative path will be invalid.
+### 1. **Download Required Binaries**
 
-Also make sure that you are using the visual studio toolchain in your Cmake profile as when using MinGW, dependencies are not found.
+Due to GitHub's 1 GB file size limitation, the required binary files are hosted externally.
 
-WARNING:
-Be aware that when running, the program may use up to 8 GB of memory.
-This is because the dataset is MASSIVE at 163 million rows. (The source csv file was 8.9 GB)
+👉 **Download `binaries.zip` from:**
+[https://drive.google.com/file/d/1HBnSRNCwfCoaA9rP8cGIjFhIeS1TEznV/view?usp=sharing](https://drive.google.com/file/d/1HBnSRNCwfCoaA9rP8cGIjFhIeS1TEznV/view?usp=sharing)
+
+* Extract the contents into the `bin/` folder of the project directory.
+* The `.zip` includes `.bin` files required for the graph database and a `.txt` file listing all valid Wikipedia article titles.
+
+### 2. **Compiling the Project**
+
+* Use **CMake** to configure and build the project.
+* Set your **IDE's working directory** to the project root (e.g., `Search-Analysis-via-Wikipedia-Graphs`).
+  This ensures the program can correctly locate the relative paths to the binaries.
+
+### 3. **Toolchain Requirements**
+
+* Use the **Visual Studio toolchain** for proper dependency resolution.
+* ⚠️ Using **MinGW** may cause build failures due to missing or incompatible dependencies.
+
+---
+
+## ⚠️ **Resource Requirements**
+
+This project uses a **very large dataset** consisting of **163 million rows** (original `.csv` \~8.9 GB). As a result:
+
+* The program may use up to **8 GB of RAM** during execution.
+* Make sure your system meets these memory requirements to avoid crashes or performance issues.
+
+---
+
+## ✅ **Features**
+
+* Graph traversal using **BFS**, **Dijkstra's**, or **Bellman-Ford**.
+* Easy-to-use graphical interface.
+* Real-time pathfinding across a large-scale Wikipedia graph.
+* Includes full support for article title validation.
